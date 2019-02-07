@@ -70,6 +70,7 @@ public class EnrichmentController {
 	@PostMapping(path = "/enrichmentRequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public StandardReturnObject submitEnrichmentRequest(@RequestBody RequestForm form) {
+		// TODO: auto-generate/override dateOfSubmission to current date
 		return service.submitEnrichmentRequest(form);
 	}
 	
