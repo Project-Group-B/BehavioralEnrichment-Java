@@ -19,7 +19,7 @@ public class RequestForm {
 	private String safetyComment;
 	private boolean safetyQuestion;
 	private String naturalBehaviors;
-	private String enrichmentCategory;
+	private String[] enrichmentCategory;
 	private String nameOfSubmitter;
 	private String otherSource;
 	private String source;
@@ -124,10 +124,10 @@ public class RequestForm {
 	public void setNaturalBehaviors(String naturalBehaviors) {
 		this.naturalBehaviors = naturalBehaviors;
 	}
-	public String getEnrichmentCategory() {
+	public String[] getEnrichmentCategory() {
 		return enrichmentCategory;
 	}
-	public void setEnrichmentCategory(String enrichmentCategory) {
+	public void setEnrichmentCategory(String[] enrichmentCategory) {
 		this.enrichmentCategory = enrichmentCategory;
 	}
 	public String getNameOfSubmitter() {

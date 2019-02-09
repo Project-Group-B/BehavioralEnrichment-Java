@@ -23,4 +23,8 @@ public class StandardReturnObject {
 	public void setErrorMsg(String errorMsg) {
 		this.errorMsg = errorMsg;
 	}
+	public void setError(boolean error, String errorMsg) {
+		this.error = error;
+		this.errorMsg = errorMsg;
+	}
 }

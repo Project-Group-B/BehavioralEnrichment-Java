@@ -1,12 +1,6 @@
 package com.uno.zoo.controller;
 
-import javax.validation.Valid;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,9 +17,10 @@ import com.uno.zoo.service.EnrichmentService;
 @RestController
 @CrossOrigin
 public class EnrichmentController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EnrichmentController.class);
 	private EnrichmentService service;
 	private static String sessionId;
+	private static final String USERNAME_LENGTH_ERROR_MSG = "Username must be between 1 and 25 characters.";
+	private static final String USERNAME_PASSWORD_ERROR = "Username or password invalid.";
 	
 	public EnrichmentController(EnrichmentService service) {
 		this.service = service;
@@ -33,13 +28,14 @@ public class EnrichmentController {
 	
 	@PostMapping(path = "/loginUser", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public UserInfo login(@Valid @RequestBody UserLogin user, BindingResult bindingResult) {
+	public UserInfo login(@RequestBody UserLogin user) {
 		sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
 		UserInfo ret = new UserInfo();
 		
-		if(bindingResult.hasErrors()) {
+		if(!usernameValid(user.getUsername())) {
 			ret.setLoggedIn(false);
-			printBindingResultErrors(bindingResult);
+			ret.setUsername(user.getUsername());
+			ret.setErrorMsg(USERNAME_LENGTH_ERROR_MSG);
 		} else {
 			ret.setLoggedIn(service.login(user));
 			ret.setUsername(user.getUsername());
@@ -47,37 +43,40 @@ public class EnrichmentController {
 			if(ret.isLoggedIn()) {
 				ret.setSessionId(sessionId);
 				ret.setAdmin(false);
-			}			
+			} else {
+				ret.setErrorMsg(USERNAME_PASSWORD_ERROR);
+			}
 		}
-		
 		
 		return ret;
 	}
 
 	@PostMapping(path = "/signUpUser", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public StandardReturnObject signUp(@RequestBody @Valid UserLogin user, BindingResult bindingResult) {
-		if(bindingResult.hasErrors()) {
-			printBindingResultErrors(bindingResult);
-			StandardReturnObject ret = new StandardReturnObject();
-			ret.setError(true);
-			ret.setErrorMsg("Error validating username/password fields.");
-			return ret;
+	public StandardReturnObject signUp(@RequestBody UserLogin user) {
+		StandardReturnObject validation = new StandardReturnObject();
+		
+		if(!usernameValid(user.getUsername())) {
+			validation.setError(true, USERNAME_LENGTH_ERROR_MSG);
+		} else {
+			validation = service.signUp(user);
 		}
-		return service.signUp(user);
+		
+		return validation;
 	}
 	
 	@PostMapping(path = "/enrichmentRequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public StandardReturnObject submitEnrichmentRequest(@RequestBody RequestForm form) {
-		// TODO: auto-generate/override dateOfSubmission to current date
+		// Override given date of submission to ensure it's set to today's date
+		java.util.Date now = new java.util.Date();
+		java.sql.Date nowSql = new java.sql.Date(now.getTime());
+		form.setDateOfSubmission(nowSql);
+		
 		return service.submitEnrichmentRequest(form);
 	}
 	
-	private void printBindingResultErrors(BindingResult bindingResult) {
-		LOGGER.info("Object fields not valid:");
-		for(FieldError error : bindingResult.getFieldErrors()) {
-			LOGGER.info(error.getField() + ": " + error.getDefaultMessage());
-		}
+	private boolean usernameValid(String username) {
+		return !(username.length() < 1 || username.length() > 25);
 	}
 }

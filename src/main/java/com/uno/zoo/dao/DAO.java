@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
+import com.uno.zoo.dto.RequestForm;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserLogin;
 
@@ -51,8 +52,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		
 		boolean usernameExists = getNamedParameterJdbcTemplate().query(USERNAME_EXISTS_SQL, params, existsRowMapper).booleanValue();
 		if(usernameExists) {
-			retObject.setError(true);
-			retObject.setErrorMsg("Username taken");
+			retObject.setError(true, "Username taken");
 		} else {
 			params.addValue("password", user.getPassword());
 			
@@ -62,6 +62,16 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			retObject.setMessage("You're all signed up! Returning to login...");
 		}
 		
+		return retObject;
+	}
+	
+	public StandardReturnObject insertRequestForm(RequestForm form) throws DataAccessException {
+		StandardReturnObject retObject = new StandardReturnObject();
+		// Convert array of categories into a single string
+		@SuppressWarnings("unused")
+		String str = String.join(",", form.getEnrichmentCategory());
+		
+		retObject.setMessage("Successfully entered form.");
 		return retObject;
 	}
 }

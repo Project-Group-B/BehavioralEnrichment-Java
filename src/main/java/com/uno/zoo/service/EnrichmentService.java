@@ -45,8 +45,7 @@ public class EnrichmentService {
 		} catch(Exception e) {
 			LOGGER.error("Error signing user up:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true);
-			ret.setErrorMsg(e.getMessage());
+			ret.setError(true, e.getMessage());
 		}
 		
 		return ret;
@@ -56,12 +55,11 @@ public class EnrichmentService {
 		StandardReturnObject ret = new StandardReturnObject();
 		
 		try {
-			ret.setMessage("Successfully entered form.");
+			ret = dao.insertRequestForm(form);
 		} catch(Exception e) {
 			LOGGER.info("Error inserting enrichment request form into database:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true);
-			ret.setErrorMsg(e.getMessage());
+			ret.setError(true, e.getMessage());
 		}
 		
 		return ret;
