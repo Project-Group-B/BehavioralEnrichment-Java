@@ -37,6 +37,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		}
 	};
 
+	// TODO: return user information (name, permissions, isAdmin, etc.) instead
 	public boolean login(UserLogin user) throws DataAccessException {
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("username", user.getUsername());

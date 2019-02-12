@@ -26,3 +26,4 @@ spring.log.*
 /nbdist/
 /.nb-gradle/
 /build/
+*.log

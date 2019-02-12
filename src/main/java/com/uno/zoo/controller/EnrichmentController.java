@@ -41,8 +41,9 @@ public class EnrichmentController {
 			ret.setUsername(user.getUsername());
 			
 			if(ret.isLoggedIn()) {
+				// TODO: change to take attributes from the database
 				ret.setSessionId(sessionId);
-				ret.setAdmin(false);
+				ret.setAdmin(true);
 			} else {
 				ret.setErrorMsg(USERNAME_PASSWORD_ERROR);
 			}
