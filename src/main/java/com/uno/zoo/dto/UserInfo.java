@@ -3,6 +3,9 @@ package com.uno.zoo.dto;
 public class UserInfo {
 	private boolean loggedIn;
 	private String username;
+	private String department;
+	private String firstName;
+	private String lastName;
 	private String sessionId;
 	private UserPermissions permissions;
 	private boolean isAdmin;
@@ -19,6 +22,24 @@ public class UserInfo {
 	}
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	public String getDepartment() {
+		return department;
+	}
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 	public String getSessionId() {
 		return sessionId;

@@ -1,17 +1,22 @@
 package com.uno.zoo.controller;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.RequestForm;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
-import com.uno.zoo.dto.UserLogin;
+import com.uno.zoo.dto.UserLogIn;
+import com.uno.zoo.dto.UserSignUp;
 import com.uno.zoo.service.EnrichmentService;
 
 @RestController
@@ -26,9 +31,9 @@ public class EnrichmentController {
 		this.service = service;
 	}
 	
-	@PostMapping(path = "/loginUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "loginUser", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public UserInfo login(@RequestBody UserLogin user) {
+	public UserInfo login(@RequestBody UserLogIn user) {
 		sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
 		UserInfo ret = new UserInfo();
 		
@@ -37,13 +42,10 @@ public class EnrichmentController {
 			ret.setUsername(user.getUsername());
 			ret.setErrorMsg(USERNAME_LENGTH_ERROR_MSG);
 		} else {
-			ret.setLoggedIn(service.login(user));
-			ret.setUsername(user.getUsername());
+			ret = service.login(user);
 			
 			if(ret.isLoggedIn()) {
-				// TODO: change to take attributes from the database
 				ret.setSessionId(sessionId);
-				ret.setAdmin(true);
 			} else {
 				ret.setErrorMsg(USERNAME_PASSWORD_ERROR);
 			}
@@ -52,9 +54,9 @@ public class EnrichmentController {
 		return ret;
 	}
 
-	@PostMapping(path = "/signUpUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "signUpUser", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public StandardReturnObject signUp(@RequestBody UserLogin user) {
+	public StandardReturnObject signUp(@RequestBody UserSignUp user) {
 		StandardReturnObject validation = new StandardReturnObject();
 		
 		if(!usernameValid(user.getUsername())) {
@@ -66,7 +68,12 @@ public class EnrichmentController {
 		return validation;
 	}
 	
-	@PostMapping(path = "/enrichmentRequest", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<DepartmentInfo> getDepartmentsFromDb() {
+		return service.getDepartments();
+	}
+	
+	@PostMapping(path = "enrichmentRequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public StandardReturnObject submitEnrichmentRequest(@RequestBody RequestForm form) {
 		// Override given date of submission to ensure it's set to today's date

@@ -1,13 +1,19 @@
 package com.uno.zoo.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.uno.zoo.dao.DAO;
+import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.RequestForm;
 import com.uno.zoo.dto.StandardReturnObject;
-import com.uno.zoo.dto.UserLogin;
+import com.uno.zoo.dto.UserInfo;
+import com.uno.zoo.dto.UserLogIn;
+import com.uno.zoo.dto.UserSignUp;
 
 @Service
 public class EnrichmentService {
@@ -18,12 +24,12 @@ public class EnrichmentService {
 		this.dao = dao;
 	}
 
-	public boolean login(UserLogin user) {
-		boolean result = false;
+	public UserInfo login(UserLogIn user) {
+		UserInfo result = new UserInfo();
 		
 		try {
 			result = dao.login(user);
-			LOGGER.info("user '{}'{} signed in.", user.getUsername(), result ? "" : " not");
+			LOGGER.info("user '{}'{} signed in.", user.getUsername(), result.isLoggedIn() ? "" : " not");
 		} catch(Exception e) {
 			LOGGER.info("Error checking if user exists:");
 			LOGGER.error(e.getMessage(), e);
@@ -32,7 +38,7 @@ public class EnrichmentService {
 		return result;
 	}
 	
-	public StandardReturnObject signUp(UserLogin user) {
+	public StandardReturnObject signUp(UserSignUp user) {
 		StandardReturnObject ret = new StandardReturnObject();
 		
 		try {
@@ -45,10 +51,23 @@ public class EnrichmentService {
 		} catch(Exception e) {
 			LOGGER.error("Error signing user up:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true, e.getMessage());
+			ret.setError(true, "Error signing up. Please try again.");
 		}
 		
 		return ret;
+	}
+	
+	public List<DepartmentInfo> getDepartments() {
+		List<DepartmentInfo> departments = new ArrayList<>();
+		
+		try {
+			departments = dao.getDepartments();
+		} catch(Exception e) {
+			LOGGER.error("Error getting departments:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return departments;
 	}
 
 	public StandardReturnObject submitEnrichmentRequest(RequestForm form) {
