@@ -27,3 +27,4 @@ spring.log.*
 /.nb-gradle/
 /build/
 *.log
+*.log
