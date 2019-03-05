@@ -14,20 +14,30 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class PGBtests {
+public class loginTest {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
 
+  /* From selenium web driver folder:
+   * you should also change build path to include:
+   * 1) client-combined-3.141.59-sources.jar
+   * 2) all .jars in "libs" folder.	
+   * */
   @Before
   public void setUp() throws Exception {
+	  // Change this path to your chrome webdriver path!
 	System.setProperty("webdriver.chrome.driver", "C:\\Users\\Zach\\Documents\\aSpring2019\\Capstone\\chromedriver_win32\\chromedriver.exe");
 	driver = new ChromeDriver();
     baseUrl = "http://localhost:4200/login";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
+  /* 
+   * Can copy and paste different commands here from katalon recorder
+   * extension for Chrome.
+   * */
   @Test
   public void testPGBDemo() throws Exception {
     driver.get("http://localhost:4200/login");
