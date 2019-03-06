@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.RequestForm;
 import com.uno.zoo.dto.StandardReturnObject;
@@ -71,6 +72,11 @@ public class EnrichmentController {
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<DepartmentInfo> getDepartmentsFromDb() {
 		return service.getDepartments();
+	}
+
+	@GetMapping(path = "categories", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<CategoryInfo> getCategoriesFromDb() {
+		return service.getCategories();
 	}
 	
 	@PostMapping(path = "enrichmentRequest", produces = MediaType.APPLICATION_JSON_VALUE)

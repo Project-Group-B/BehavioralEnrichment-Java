@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.uno.zoo.dao.DAO;
+import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.RequestForm;
 import com.uno.zoo.dto.StandardReturnObject;
@@ -68,6 +69,19 @@ public class EnrichmentService {
 		}
 		
 		return departments;
+	}
+	
+	public List<CategoryInfo> getCategories() {
+		List<CategoryInfo> categories = new ArrayList<>();
+		
+		try {
+			categories = dao.getCategories();
+		} catch(Exception e) {
+			LOGGER.error("Error getting departments:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return categories;
 	}
 
 	public StandardReturnObject submitEnrichmentRequest(RequestForm form) {

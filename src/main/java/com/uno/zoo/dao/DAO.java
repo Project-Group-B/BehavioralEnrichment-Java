@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
+import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.RequestForm;
 import com.uno.zoo.dto.StandardReturnObject;
@@ -26,6 +27,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String USERNAME_EXISTS_SQL = "SELECT EXISTS (SELECT 1 FROM user WHERE User_Name = :username) as doesExist";
 	private static final String ADD_USER_SQL = "INSERT INTO user (User_Name, User_Pass, User_Status, User_Department, User_FirstName, User_LastName) VALUES (:username, sha2(:password, 256), :status, :department, :firstName, :lastName)";
 	private static final String GET_DEPARTMENTS_SQL = "SELECT Department_Id, Department_Name from department";
+	private static final String GET_CATEGORIES_SQL = "SELECT Category_Id, Category_Name, Category_Description from category";
 	
 	public DAO(DataSource dataSource) {
 		super.setDataSource(dataSource);
@@ -96,6 +98,24 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		};
 		
 		return getNamedParameterJdbcTemplate().query(GET_DEPARTMENTS_SQL, rowMapper);
+	}
+	
+	public List<CategoryInfo> getCategories() throws NumberFormatException, SQLException, DataAccessException {
+		ResultSetExtractor<List<CategoryInfo>> rowMapper = new ResultSetExtractor<List<CategoryInfo>>() {
+			@Override public List<CategoryInfo> extractData(ResultSet rs) throws SQLException {
+				List<CategoryInfo> info = new ArrayList<>();
+				while(rs.next()) {
+					CategoryInfo newCat = new CategoryInfo();
+					newCat.setCategoryId(Integer.parseInt(rs.getString("Category_Id")));
+					newCat.setCategoryName(rs.getString("Category_Name"));
+					newCat.setCategoryDescription(rs.getString("Category_Description"));
+					info.add(newCat);
+				}
+				return info;
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_CATEGORIES_SQL, rowMapper);
 	}
 	
 	public StandardReturnObject insertRequestForm(RequestForm form) throws DataAccessException {

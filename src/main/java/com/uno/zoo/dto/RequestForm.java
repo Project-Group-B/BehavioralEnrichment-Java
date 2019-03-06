@@ -18,6 +18,7 @@ public class RequestForm {
 	private boolean lifeStrategiesWksht;
 	private String safetyComment;
 	private boolean safetyQuestion;
+	private boolean risksQuestion;
 	private String naturalBehaviors;
 	private String[] enrichmentCategory;
 	private String nameOfSubmitter;
@@ -117,6 +118,12 @@ public class RequestForm {
 	}
 	public void setSafetyQuestion(boolean safetyQuestion) {
 		this.safetyQuestion = safetyQuestion;
+	}
+	public boolean isRisksQuestion() {
+		return risksQuestion;
+	}
+	public void setRisksQuestion(boolean risksQuestion) {
+		this.risksQuestion = risksQuestion;
 	}
 	public String getNaturalBehaviors() {
 		return naturalBehaviors;
