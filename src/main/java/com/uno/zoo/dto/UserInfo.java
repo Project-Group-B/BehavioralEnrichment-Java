@@ -10,6 +10,7 @@ public class UserInfo {
 	private UserPermissions permissions;
 	private boolean isAdmin;
 	private String errorMsg;
+	private int id;
 	
 	public boolean isLoggedIn() {
 		return loggedIn;
@@ -64,5 +65,11 @@ public class UserInfo {
 	}
 	public void setErrorMsg(String errorMsg) {
 		this.errorMsg = errorMsg;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 }

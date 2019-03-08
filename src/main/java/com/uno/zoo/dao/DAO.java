@@ -15,7 +15,8 @@ import org.springframework.stereotype.Component;
 
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.DepartmentInfo;
-import com.uno.zoo.dto.RequestForm;
+import com.uno.zoo.dto.CompleteRequestForm;
+import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
 import com.uno.zoo.dto.UserLogIn;
@@ -23,26 +24,28 @@ import com.uno.zoo.dto.UserSignUp;
 
 @Component
 public class DAO extends NamedParameterJdbcDaoSupport {
-	private static final String LOGIN_USER_SQL = "SELECT User_Name, User_Status, User_FirstName, User_LastName, User_Department from user WHERE User_Name = :username AND User_Pass = sha2(:password, 256)";
-	private static final String USERNAME_EXISTS_SQL = "SELECT EXISTS (SELECT 1 FROM user WHERE User_Name = :username) as doesExist";
+	private static final String LOGIN_USER_SQL = "SELECT User_Id, User_Name, User_Status, User_FirstName, User_LastName, User_Department from user WHERE User_Name = :username AND User_Pass = sha2(:password, 256)";
+	private static final String USERNAME_EXISTS_SQL = "SELECT EXISTS (SELECT 1 FROM user WHERE User_Name = :username) AS doesExist";
 	private static final String ADD_USER_SQL = "INSERT INTO user (User_Name, User_Pass, User_Status, User_Department, User_FirstName, User_LastName) VALUES (:username, sha2(:password, 256), :status, :department, :firstName, :lastName)";
-	private static final String GET_DEPARTMENTS_SQL = "SELECT Department_Id, Department_Name from department";
-	private static final String GET_CATEGORIES_SQL = "SELECT Category_Id, Category_Name, Category_Description from category";
+	private static final String GET_DEPARTMENTS_SQL = "SELECT Department_Id, Department_Name FROM department ORDER BY Department_Name asc";
+	private static final String GET_CATEGORIES_SQL = "SELECT Category_Id, Category_Name, Category_Description FROM category ORDER BY Category_Name asc";
+	private static final String GET_SPECIES_SQL = "SELECT Species_Id, Species_Name, Species_Description, Species_IsisNumber FROM species ORDER BY Species_Name ASC";
 	
 	public DAO(DataSource dataSource) {
 		super.setDataSource(dataSource);
 	}
 
-	public UserInfo login(UserLogIn user) throws DataAccessException {
+	public UserInfo login(UserLogIn user) throws DataAccessException, SQLException, NumberFormatException {
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("username", user.getUsername());
 		params.addValue("password", user.getPassword());
 		
 		ResultSetExtractor<UserInfo> rowMapper = new ResultSetExtractor<UserInfo>() {
-			@Override public UserInfo extractData(ResultSet rs) throws SQLException {
+			@Override public UserInfo extractData(ResultSet rs) throws SQLException, NumberFormatException {
 				UserInfo info = new UserInfo();
 				if(rs.next()) {
 					info.setLoggedIn(true);
+					info.setId(Integer.parseInt(rs.getString("User_Id")));
 					info.setUsername(rs.getString("User_Name"));
 					info.setDepartment(rs.getString("User_Department"));
 					info.setFirstName(rs.getString("User_FirstName"));
@@ -102,7 +105,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	
 	public List<CategoryInfo> getCategories() throws NumberFormatException, SQLException, DataAccessException {
 		ResultSetExtractor<List<CategoryInfo>> rowMapper = new ResultSetExtractor<List<CategoryInfo>>() {
-			@Override public List<CategoryInfo> extractData(ResultSet rs) throws SQLException {
+			@Override public List<CategoryInfo> extractData(ResultSet rs) throws SQLException, NumberFormatException {
 				List<CategoryInfo> info = new ArrayList<>();
 				while(rs.next()) {
 					CategoryInfo newCat = new CategoryInfo();
@@ -118,7 +121,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		return getNamedParameterJdbcTemplate().query(GET_CATEGORIES_SQL, rowMapper);
 	}
 	
-	public StandardReturnObject insertRequestForm(RequestForm form) throws DataAccessException {
+	public StandardReturnObject insertRequestForm(CompleteRequestForm form) throws DataAccessException {
 		StandardReturnObject retObject = new StandardReturnObject();
 		// Convert array of categories into a single string
 		@SuppressWarnings("unused")
@@ -143,5 +146,24 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		};
 		
 		return getNamedParameterJdbcTemplate().query(USERNAME_EXISTS_SQL, params, existsRowMapper).booleanValue();
+	}
+
+	public List<SpeciesInfo> getSpecies() throws NumberFormatException, SQLException, DataAccessException {
+		ResultSetExtractor<List<SpeciesInfo>> rowMapper = new ResultSetExtractor<List<SpeciesInfo>>() {
+			@Override public List<SpeciesInfo> extractData(ResultSet rs) throws SQLException, NumberFormatException {
+				List<SpeciesInfo> info = new ArrayList<>();
+				while(rs.next()) {
+					SpeciesInfo newSpecies = new SpeciesInfo();
+					newSpecies.setSpeciesId(Integer.parseInt(rs.getString("Species_Id")));
+					newSpecies.setSpeciesName(rs.getString("Species_Name"));
+					newSpecies.setSpeciesDescription(rs.getString("Species_Description"));
+					newSpecies.setSpeciesIsisNumber(Integer.parseInt(rs.getString("Species_IsisNumber")));
+					info.add(newSpecies);
+				}
+				return info;
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_SPECIES_SQL, rowMapper);
 	}
 }

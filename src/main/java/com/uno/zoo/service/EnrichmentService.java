@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 import com.uno.zoo.dao.DAO;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.DepartmentInfo;
-import com.uno.zoo.dto.RequestForm;
+import com.uno.zoo.dto.CompleteRequestForm;
+import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
 import com.uno.zoo.dto.UserLogIn;
@@ -57,6 +58,20 @@ public class EnrichmentService {
 		
 		return ret;
 	}
+
+	public StandardReturnObject submitEnrichmentRequest(CompleteRequestForm form) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.insertRequestForm(form);
+		} catch(Exception e) {
+			LOGGER.info("Error inserting enrichment request form into database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, e.getMessage());
+		}
+		
+		return ret;
+	}
 	
 	public List<DepartmentInfo> getDepartments() {
 		List<DepartmentInfo> departments = new ArrayList<>();
@@ -84,17 +99,16 @@ public class EnrichmentService {
 		return categories;
 	}
 
-	public StandardReturnObject submitEnrichmentRequest(RequestForm form) {
-		StandardReturnObject ret = new StandardReturnObject();
+	public List<SpeciesInfo> getSpecies() {
+		List<SpeciesInfo> species = new ArrayList<>();
 		
 		try {
-			ret = dao.insertRequestForm(form);
+			species = dao.getSpecies();
 		} catch(Exception e) {
-			LOGGER.info("Error inserting enrichment request form into database:");
+			LOGGER.error("Error getting species:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true, e.getMessage());
 		}
 		
-		return ret;
+		return species;
 	}
 }

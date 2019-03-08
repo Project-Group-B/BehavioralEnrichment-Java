@@ -13,7 +13,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.DepartmentInfo;
-import com.uno.zoo.dto.RequestForm;
+import com.uno.zoo.dto.CompleteRequestForm;
+import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
 import com.uno.zoo.dto.UserLogIn;
@@ -69,6 +70,17 @@ public class EnrichmentController {
 		return validation;
 	}
 	
+	@PostMapping(path = "enrichmentRequest", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject submitEnrichmentRequest(@RequestBody CompleteRequestForm form) {
+		// Override given date of submission to ensure it's set to today's date
+		java.util.Date now = new java.util.Date();
+		java.sql.Date nowSql = new java.sql.Date(now.getTime());
+		form.setDateOfSubmission(nowSql);
+		
+		return service.submitEnrichmentRequest(form);
+	}
+	
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<DepartmentInfo> getDepartmentsFromDb() {
 		return service.getDepartments();
@@ -79,17 +91,11 @@ public class EnrichmentController {
 		return service.getCategories();
 	}
 	
-	@PostMapping(path = "enrichmentRequest", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public StandardReturnObject submitEnrichmentRequest(@RequestBody RequestForm form) {
-		// Override given date of submission to ensure it's set to today's date
-		java.util.Date now = new java.util.Date();
-		java.sql.Date nowSql = new java.sql.Date(now.getTime());
-		form.setDateOfSubmission(nowSql);
-		
-		return service.submitEnrichmentRequest(form);
+	@GetMapping(path = "species", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<SpeciesInfo> getSpeciesFromDb() {
+		return service.getSpecies();
 	}
-	
+
 	private boolean usernameValid(String username) {
 		return !(username.length() < 1 || username.length() > 25);
 	}
