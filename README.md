@@ -1,3 +1,6 @@
+## Documentation
+* https://project-group-b.github.io/BehavioralEnrichment-Java/
+
 ## Import into Eclipse
 1. Can follow this guide: https://stackoverflow.com/questions/2061094/importing-maven-project-into-eclipse
 2. Basics:
