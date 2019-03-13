@@ -1,5 +1,10 @@
 package com.uno.zoo.dto;
 
+/**
+ * Info about the item categories, including their name and description.
+ * @author Donovan
+ *
+ */
 public class CategoryInfo {
 	private int categoryId;
 	private String categoryName;

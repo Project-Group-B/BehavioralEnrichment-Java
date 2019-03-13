@@ -1,5 +1,11 @@
 package com.uno.zoo.dto;
 
+/**
+ * Return object that will be used for standard functions. Only includes a string message, string error
+ * message, and boolean error flag.
+ * @author Donovan
+ *
+ */
 public class StandardReturnObject {
 	private String message;
 	private boolean error;

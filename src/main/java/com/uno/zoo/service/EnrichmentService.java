@@ -26,6 +26,13 @@ public class EnrichmentService {
 		this.dao = dao;
 	}
 
+	/**
+	 * Checks the database for the user's passed in credentials, returning the user information if the 
+	 * credentials are verified (username + password is a valid user).
+	 * @param user {@link UserLogIn} information
+	 * @return If user credentials are verified, returns {@link UserInfo} with user information, else returns
+	 * without the user information.
+	 */
 	public UserInfo login(UserLogIn user) {
 		UserInfo result = new UserInfo();
 		
@@ -40,6 +47,12 @@ public class EnrichmentService {
 		return result;
 	}
 	
+	/**
+	 * Signs the user up to use the system. User information must be provided, including username, first
+	 * name, last name, etc.
+	 * @param user {@link UserSignUp} information
+	 * @return {@link StandardReturnObject} with success/error message, depending on if there was an error
+	 */
 	public StandardReturnObject signUp(UserSignUp user) {
 		StandardReturnObject ret = new StandardReturnObject();
 		
@@ -59,6 +72,11 @@ public class EnrichmentService {
 		return ret;
 	}
 
+	/**
+	 * Adds the enrichment request information to the database.
+	 * @param form {@link CompleteRequestForm} - enrichment request form information
+	 * @return {@link StandardReturnObject} with success/error message depending on if there was an error
+	 */
 	public StandardReturnObject submitEnrichmentRequest(CompleteRequestForm form) {
 		StandardReturnObject ret = new StandardReturnObject();
 		
@@ -73,6 +91,10 @@ public class EnrichmentService {
 		return ret;
 	}
 	
+	/**
+	 * Gets a list of all the departments in the database.
+	 * @return A {@link java.util.ArrayList} of {@link DepartmentInfo}
+	 */
 	public List<DepartmentInfo> getDepartments() {
 		List<DepartmentInfo> departments = new ArrayList<>();
 		
@@ -86,6 +108,10 @@ public class EnrichmentService {
 		return departments;
 	}
 	
+	/**
+	 * Gets a list of all item categories from the database.
+	 * @return A {@link java.util.ArrayList} of {@link CategoryInfo}
+	 */
 	public List<CategoryInfo> getCategories() {
 		List<CategoryInfo> categories = new ArrayList<>();
 		
@@ -99,6 +125,10 @@ public class EnrichmentService {
 		return categories;
 	}
 
+	/**
+	 * Gets a list of all species from the database.
+	 * @return A {@link java.util.ArrayList} of {@link SpeciesInfo}
+	 */
 	public List<SpeciesInfo> getSpecies() {
 		List<SpeciesInfo> species = new ArrayList<>();
 		

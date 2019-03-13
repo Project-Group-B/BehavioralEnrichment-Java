@@ -1,5 +1,11 @@
 package com.uno.zoo.dto;
 
+/**
+ * Object to hold the user info from the database including: whether the user is an admin user, user
+ * department, user first and last name, etc.
+ * @author Donovan Troshynski
+ *
+ */
 public class UserInfo {
 	private boolean loggedIn;
 	private String username;

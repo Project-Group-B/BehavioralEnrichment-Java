@@ -1,5 +1,10 @@
 package com.uno.zoo.dto;
 
+/**
+ * Info about each species, including their name, description, and ISIS number.
+ * @author Donovan
+ *
+ */
 public class SpeciesInfo {
 	private int speciesId;
 	private String speciesName;

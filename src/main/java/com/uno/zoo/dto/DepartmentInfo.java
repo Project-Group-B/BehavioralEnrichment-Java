@@ -1,5 +1,10 @@
 package com.uno.zoo.dto;
 
+/**
+ * Database id and name of each department.
+ * @author Donovan
+ *
+ */
 public class DepartmentInfo {
 	private int departmentId;
 	private String departmentName;

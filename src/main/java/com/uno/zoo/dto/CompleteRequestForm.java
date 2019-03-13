@@ -2,6 +2,11 @@ package com.uno.zoo.dto;
 
 import java.sql.Date;
 
+/**
+ * Complete item enrichment request form.
+ * @author Donovan
+ *
+ */
 public class CompleteRequestForm {
 	private DepartmentInfo department;
 	private SpeciesInfo species;

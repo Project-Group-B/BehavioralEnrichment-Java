@@ -3,6 +3,11 @@ package com.uno.zoo.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * User's sign up information. All fields must be provided.
+ * @author Donovan
+ *
+ */
 public class UserSignUp {
 	@Size(min=1, max=25)
 	@NotNull

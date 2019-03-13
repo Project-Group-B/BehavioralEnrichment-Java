@@ -30,11 +30,30 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String GET_DEPARTMENTS_SQL = "SELECT Department_Id, Department_Name FROM department ORDER BY Department_Name asc";
 	private static final String GET_CATEGORIES_SQL = "SELECT Category_Id, Category_Name, Category_Description FROM category ORDER BY Category_Name asc";
 	private static final String GET_SPECIES_SQL = "SELECT Species_Id, Species_Name, Species_Description, Species_IsisNumber FROM species ORDER BY Species_Name ASC";
+	private static final String ENRICHMENT_REQUEST_FORM_SQL = "INSERT INTO enrichment_experience "
+			+ "(Enrichment_Department, Enrichment_species, Enrichment_Name, Enrichment_Description, "
+			+ "Enrichment_PresentationMethod, Enrichment_TimeStart, Enrichment_Frequency, "
+			+ "Enrichment_LifeStrategies, Enrichment_PreviousUse, Enrichment_SafetyQuestions, "
+			+ "Enrichment_RisksHazards, Enrichment_Concerns, Enrichment_ExpectedBehavior, "
+			+ "Enrichment_Source, Enrichment_TimeRequired, Enrichment_Construction, Enrichment_Volunteers, "
+			+ "Enrichment_Submittor, Enrichment_DateSubmitted) values "
+			+ "(:dept, :species, :name, :description, :presentationMethod, :timeStart, :frequency, "
+			+ ":lifeStrategies, :previousUse, :safetyQuestions, :risksHazards, :concerns, :expectedBehavior,"
+			+ ":source, :timeRequired, :construction, :volunteers, :submitter, :dateSubmitted)";
 	
 	public DAO(DataSource dataSource) {
 		super.setDataSource(dataSource);
 	}
 
+	/**
+	 * Accesses the database and retrieves the user information from valid credentials are provided.
+	 * @param user {@link UserLogIn} information
+	 * @return {@link UserInfo} completely filled out if logged in. If not logged in, object parameters will
+	 * be null except {@link UserInfo#setLoggedIn(boolean)} will be false
+	 * @throws DataAccessException
+	 * @throws SQLException
+	 * @throws NumberFormatException
+	 */
 	public UserInfo login(UserLogIn user) throws DataAccessException, SQLException, NumberFormatException {
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("username", user.getUsername());
@@ -61,6 +80,14 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		return getNamedParameterJdbcTemplate().query(LOGIN_USER_SQL, params, rowMapper);
 	}
 
+	/**
+	 * Accesses the database and signs up the user with the information provided.
+	 * @param user {@link UserSignUp} information
+	 * @return {@link StandardReturnObject} message/error message
+	 * @throws DataAccessException
+	 * @throws SQLException
+	 * @throws Exception
+	 */
 	public StandardReturnObject signUp(UserSignUp user) throws DataAccessException, SQLException, Exception {
 		StandardReturnObject retObject = new StandardReturnObject();
 		MapSqlParameterSource params = new MapSqlParameterSource();
@@ -86,6 +113,13 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		return retObject;
 	}
 	
+	/**
+	 * Accesses the database to retrieve all departments.
+	 * @return A {@link java.util.ArrayList} of {@link DepartmentInfo}
+	 * @throws NumberFormatException
+	 * @throws SQLException
+	 * @throws DataAccessException
+	 */
 	public List<DepartmentInfo> getDepartments() throws NumberFormatException, SQLException, DataAccessException {
 		ResultSetExtractor<List<DepartmentInfo>> rowMapper = new ResultSetExtractor<List<DepartmentInfo>>() {
 			@Override public List<DepartmentInfo> extractData(ResultSet rs) throws SQLException {
@@ -103,6 +137,13 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		return getNamedParameterJdbcTemplate().query(GET_DEPARTMENTS_SQL, rowMapper);
 	}
 	
+	/**
+	 * Accesses the database to retrieve all categories.
+	 * @return A {@link java.util.ArrayList} of {@link CategoryInfo}
+	 * @throws NumberFormatException
+	 * @throws SQLException
+	 * @throws DataAccessException
+	 */
 	public List<CategoryInfo> getCategories() throws NumberFormatException, SQLException, DataAccessException {
 		ResultSetExtractor<List<CategoryInfo>> rowMapper = new ResultSetExtractor<List<CategoryInfo>>() {
 			@Override public List<CategoryInfo> extractData(ResultSet rs) throws SQLException, NumberFormatException {
@@ -121,16 +162,56 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		return getNamedParameterJdbcTemplate().query(GET_CATEGORIES_SQL, rowMapper);
 	}
 	
+	/**
+	 * Accesses the database and inserts the complete item enrichment request form
+	 * @param form {@link CompleteRequestForm}
+	 * @return {@link StandardReturnObject} with no parameters filled out - calling function responsible for
+	 * that.
+	 * @throws DataAccessException
+	 */
 	public StandardReturnObject insertRequestForm(CompleteRequestForm form) throws DataAccessException {
 		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		// TODO: Enrichment_Item - id from 'item' table
+		// TODO: Enrichment_Animal - id from 'animal' table, can be null
+		// TODO: Enrichment_Location - id from 'location' table
+		// TODO: Enrichment_TimeEnd - datetime
+		// TODO: Enrichment_Goal - varchar(1000)
+		// TODO: Enrichment_Inventory - varchar(10)
+		// TODO: Enrichment_IsApproved - int
+		params.addValue("dept", form.getDepartment().getDepartmentId()); // id from 'department' table
+		params.addValue("species", form.getSpecies().getSpeciesId()); // id from 'species' table
+		params.addValue("name", form.getEnrichmentName()); // have
+		params.addValue("description", form.getEnrichmentDescription()); // have
+		params.addValue("presentationMethod", form.getEnrichmentPresentation()); // have
+		params.addValue("timeStart", form.getTimeRequired()); // TODO: needs to be type datetime
+		params.addValue("frequency", form.getEnrichmentFrequency()); // TODO: needs to be int
+		params.addValue("lifeStrategies", form.isLifeStrategiesWksht()); // TODO: needs to be int
+		params.addValue("previousUse", form.isAnotherDeptZoo()); // TODO: needs to be int
+		params.addValue("safetyQuestions", form.isSafetyQuestion()); // TODO: needs to be int
+		params.addValue("risksHazards", form.isRisksQuestion()); // TODO: needs to be int
+		params.addValue("concerns", form.getSafetyComment()); // have
+		params.addValue("expectedBehavior", form.getNaturalBehaviors()); // have
+		params.addValue("source", form.getSource()); // have
+		params.addValue("timeRequired", form.getTimeRequired()); // TODO: needs to be int
+		params.addValue("construction", form.getWhoConstructs()); // have
+		params.addValue("volunteers", form.isVolunteerDocentUtilized()); // TODO: needs to be int
+		params.addValue("submitter", form.getNameOfSubmitter()); // id from 'user' table
+		params.addValue("dateSubmitted", form.getDateOfSubmission()); // have
+		
 		// Convert array of categories into a single string
 		@SuppressWarnings("unused")
 		String str = String.join(",", form.getEnrichmentCategory());
 		
-		retObject.setMessage("Successfully entered form.");
+//		getNamedParameterJdbcTemplate().query(ENRICHMENT_REQUEST_FORM_SQL, rowMapper);
 		return retObject;
 	}
 	
+	/**
+	 * Accesses the database and returns whether the given username is taken by another user.
+	 * @param username String username to check the existence of in the database.
+	 * @return {@code true} if the username exists in the database, {@code false} otherwise
+	 */
 	private boolean usernameExists(String username) {
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("username", username);
@@ -148,6 +229,13 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		return getNamedParameterJdbcTemplate().query(USERNAME_EXISTS_SQL, params, existsRowMapper).booleanValue();
 	}
 
+	/**
+	 * Accesses the database to retrieve all species' info.
+	 * @return A {@link java.util.ArrayList} of {@link SpeciesInfo}
+	 * @throws NumberFormatException
+	 * @throws SQLException
+	 * @throws DataAccessException
+	 */
 	public List<SpeciesInfo> getSpecies() throws NumberFormatException, SQLException, DataAccessException {
 		ResultSetExtractor<List<SpeciesInfo>> rowMapper = new ResultSetExtractor<List<SpeciesInfo>>() {
 			@Override public List<SpeciesInfo> extractData(ResultSet rs) throws SQLException, NumberFormatException {
