@@ -1,12 +1,22 @@
 package com.uno.zoo.dto;
 
+/**
+ * Object to hold the user info from the database including: whether the user is an admin user, user
+ * department, user first and last name, etc.
+ * @author Donovan Troshynski
+ *
+ */
 public class UserInfo {
 	private boolean loggedIn;
 	private String username;
+	private String department;
+	private String firstName;
+	private String lastName;
 	private String sessionId;
 	private UserPermissions permissions;
 	private boolean isAdmin;
 	private String errorMsg;
+	private int id;
 	
 	public boolean isLoggedIn() {
 		return loggedIn;
@@ -19,6 +29,24 @@ public class UserInfo {
 	}
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	public String getDepartment() {
+		return department;
+	}
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 	public String getSessionId() {
 		return sessionId;
@@ -43,5 +71,11 @@ public class UserInfo {
 	}
 	public void setErrorMsg(String errorMsg) {
 		this.errorMsg = errorMsg;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 }

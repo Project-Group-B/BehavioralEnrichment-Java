@@ -2,9 +2,14 @@ package com.uno.zoo.dto;
 
 import java.sql.Date;
 
-public class RequestForm {
-	private String department;
-	private String species;
+/**
+ * Complete item enrichment request form.
+ * @author Donovan
+ *
+ */
+public class CompleteRequestForm {
+	private DepartmentInfo department;
+	private SpeciesInfo species;
 	private String housed;
 	private String activityCycle;
 	private String age;
@@ -18,9 +23,10 @@ public class RequestForm {
 	private boolean lifeStrategiesWksht;
 	private String safetyComment;
 	private boolean safetyQuestion;
+	private boolean risksQuestion;
 	private String naturalBehaviors;
 	private String[] enrichmentCategory;
-	private String nameOfSubmitter;
+	private PartialUserInfo nameOfSubmitter;
 	private String otherSource;
 	private String source;
 	private String timeRequired;
@@ -28,16 +34,16 @@ public class RequestForm {
 	private String whoConstructs;
 	private Date dateOfSubmission;
 	
-	public String getDepartment() {
+	public DepartmentInfo getDepartment() {
 		return department;
 	}
-	public void setDepartment(String department) {
+	public void setDepartment(DepartmentInfo department) {
 		this.department = department;
 	}
-	public String getSpecies() {
+	public SpeciesInfo getSpecies() {
 		return species;
 	}
-	public void setSpecies(String species) {
+	public void setSpecies(SpeciesInfo species) {
 		this.species = species;
 	}
 	public String getHoused() {
@@ -118,6 +124,12 @@ public class RequestForm {
 	public void setSafetyQuestion(boolean safetyQuestion) {
 		this.safetyQuestion = safetyQuestion;
 	}
+	public boolean isRisksQuestion() {
+		return risksQuestion;
+	}
+	public void setRisksQuestion(boolean risksQuestion) {
+		this.risksQuestion = risksQuestion;
+	}
 	public String getNaturalBehaviors() {
 		return naturalBehaviors;
 	}
@@ -130,10 +142,10 @@ public class RequestForm {
 	public void setEnrichmentCategory(String[] enrichmentCategory) {
 		this.enrichmentCategory = enrichmentCategory;
 	}
-	public String getNameOfSubmitter() {
+	public PartialUserInfo getNameOfSubmitter() {
 		return nameOfSubmitter;
 	}
-	public void setNameOfSubmitter(String nameOfSubmitter) {
+	public void setNameOfSubmitter(PartialUserInfo nameOfSubmitter) {
 		this.nameOfSubmitter = nameOfSubmitter;
 	}
 	public String getOtherSource() {
