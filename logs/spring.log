@@ -1,28 +1,29 @@
-2019-03-05 09:31:58.565  INFO 1764 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Frainbreeze with PID 1764 (C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java\target\classes started by Zach in C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java)
-2019-03-05 09:31:58.691  INFO 1764 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-03-05 09:32:58.547  WARN 1764 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-03-05 09:33:01.240  INFO 1764 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 70.185 seconds (JVM running for 99.642)
-2019-03-05 09:37:22.436  INFO 1764 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 09:39:20.950  INFO 1764 --- [http-nio-8080-exec-5] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 09:40:55.964  INFO 1764 --- [http-nio-8080-exec-8] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 09:42:00.847  INFO 1764 --- [http-nio-8080-exec-1] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 09:43:20.948  INFO 1764 --- [http-nio-8080-exec-4] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 09:44:49.460  INFO 1764 --- [http-nio-8080-exec-6] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 09:45:28.927  INFO 1764 --- [http-nio-8080-exec-7] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 09:45:55.095  INFO 1764 --- [http-nio-8080-exec-8] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 10:07:18.297  WARN 1764 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=21m23s724탎19ns).
-2019-03-05 10:07:50.482  INFO 1764 --- [http-nio-8080-exec-1] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 11:49:42.054  WARN 1764 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=27m22s97ms359탎915ns).
-2019-03-05 12:10:31.059  INFO 12516 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Frainbreeze with PID 12516 (C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java\target\classes started by Zach in C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java)
-2019-03-05 12:10:31.074  INFO 12516 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-03-05 12:10:55.649  WARN 12516 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-03-05 12:10:57.202  INFO 12516 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 30.235 seconds (JVM running for 50.516)
-2019-03-05 12:31:42.122  INFO 12516 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 12:32:34.077  INFO 12516 --- [http-nio-8080-exec-5] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 12:34:28.886  INFO 8356 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Frainbreeze with PID 8356 (C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java\target\classes started by Zach in C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java)
-2019-03-05 12:34:28.901  INFO 8356 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-03-05 12:34:40.666  WARN 8356 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-03-05 12:34:42.245  INFO 8356 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 14.164 seconds (JVM running for 22.707)
-2019-03-05 12:35:15.016  INFO 8356 --- [http-nio-8080-exec-1] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 12:35:59.206  INFO 8356 --- [http-nio-8080-exec-4] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
-2019-03-05 12:46:03.259  INFO 8356 --- [http-nio-8080-exec-7] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:27:19.949  INFO 13796 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Frainbreeze with PID 13796 (C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java\target\classes started by Zach in C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java)
+2019-03-06 12:27:19.973  INFO 13796 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
+2019-03-06 12:27:40.202  WARN 13796 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-03-06 12:27:41.874  INFO 13796 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 23.784 seconds (JVM running for 45.641)
+2019-03-06 12:30:27.645  INFO 13796 --- [http-nio-8080-exec-9] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:31:08.815  INFO 13796 --- [http-nio-8080-exec-6] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:32:27.035  INFO 13796 --- [http-nio-8080-exec-3] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:34:18.171  INFO 13796 --- [http-nio-8080-exec-10] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:36:54.641  INFO 13796 --- [http-nio-8080-exec-7] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:37:38.803  INFO 13796 --- [http-nio-8080-exec-5] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:40:32.191  INFO 13796 --- [http-nio-8080-exec-3] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:40:44.222  INFO 13796 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:41:13.006  INFO 13796 --- [http-nio-8080-exec-1] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:44:10.962  INFO 13796 --- [http-nio-8080-exec-8] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:45:53.530  INFO 13796 --- [http-nio-8080-exec-5] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 14:05:49.506  WARN 13796 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=40m19s336ms431탎972ns).
+2019-03-06 17:36:09.739  INFO 13432 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Frainbreeze with PID 13432 (C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java\target\classes started by Zach in C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java)
+2019-03-06 17:36:09.746  INFO 13432 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
+2019-03-06 17:36:27.898  WARN 13432 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-03-06 17:36:30.063  INFO 13432 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 21.148 seconds (JVM running for 34.821)
+2019-03-06 17:37:26.454  INFO 13432 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 18:14:36.838  INFO 13432 --- [http-nio-8080-exec-5] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 18:32:12.314  INFO 6336 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Frainbreeze with PID 6336 (C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java\target\classes started by Zach in C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java)
+2019-03-06 18:32:12.322  INFO 6336 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
+2019-03-06 18:32:26.288  WARN 6336 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-03-06 18:32:28.240  INFO 6336 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 16.834 seconds (JVM running for 32.552)
+2019-03-06 18:32:52.368  INFO 6336 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 18:33:35.583  INFO 6336 --- [http-nio-8080-exec-4] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 19:04:11.963  WARN 6336 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=29m20s662ms137탎526ns).

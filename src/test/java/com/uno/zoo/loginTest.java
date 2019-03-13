@@ -20,14 +20,9 @@ public class loginTest {
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
 
-  /* From selenium web driver folder:
-   * you should also change build path to include:
-   * 1) client-combined-3.141.59-sources.jar
-   * 2) all .jars in "libs" folder.	
-   * */
   @Before
   public void setUp() throws Exception {
-	  // Change this path to your chrome webdriver path!
+	  // Change this path to your local chrome webdriver path!
 	System.setProperty("webdriver.chrome.driver", "C:\\Users\\Zach\\Documents\\aSpring2019\\Capstone\\chromedriver_win32\\chromedriver.exe");
 	driver = new ChromeDriver();
     baseUrl = "http://localhost:4200/login";
@@ -40,21 +35,22 @@ public class loginTest {
    * */
   @Test
   public void testPGBDemo() throws Exception {
-    driver.get("http://localhost:4200/login");
-    driver.findElement(By.id("mat-input-0")).click();
-    driver.findElement(By.id("mat-input-0")).clear();
-    driver.findElement(By.id("mat-input-0")).sendKeys("updog");
-    driver.findElement(By.id("mat-input-1")).click();
-    driver.findElement(By.id("mat-input-1")).clear();
-    driver.findElement(By.id("mat-input-1")).sendKeys("updog");
-    driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='The Henry Doorly Zoo Behavior Enrichment Program'])[1]/following::figure[1]")).click();
-    Thread.sleep(2000);
-    driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Sign Up'])[1]/following::span[1]")).click();
-    Thread.sleep(2000);
-    driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Menu'])[1]/following::button[1]")).click();
-    Thread.sleep(2000);
-    assertEquals("Login", driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='The Henry Doorly Zoo Behavior Enrichment Program'])[1]/following::mat-card-title[1]")).getText());
-    Thread.sleep(2000);
+	  	driver.get("http://localhost:4200/login");
+	    driver.findElement(By.id("mat-input-0")).click();
+	    driver.findElement(By.id("mat-input-0")).clear();
+	    driver.findElement(By.id("mat-input-0")).sendKeys("updog");
+	    Thread.sleep(500);
+	    driver.findElement(By.id("mat-input-1")).click();
+	    driver.findElement(By.id("mat-input-1")).clear();
+	    driver.findElement(By.id("mat-input-1")).sendKeys("updog");
+	    Thread.sleep(500);
+	    driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='The Henry Doorly Zoo Behavior Enrichment Program'])[1]/following::mat-card[1]")).click();
+	    driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Sign Up'])[1]/following::span[1]")).click();
+	    Thread.sleep(2000);
+	    driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Admin'])[1]/following::span[2]")).click();
+	    Thread.sleep(2000);
+	    assertEquals("Login", driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='The Henry Doorly Zoo Behavior Enrichment Program'])[1]/following::mat-card-title[1]")).getText());
+	    Thread.sleep(2000);
   }
 
   @After
