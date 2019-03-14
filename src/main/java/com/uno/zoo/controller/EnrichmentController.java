@@ -19,6 +19,7 @@ import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
+import com.uno.zoo.dto.UserListInfo;
 import com.uno.zoo.dto.UserLogIn;
 import com.uno.zoo.dto.UserSignUp;
 import com.uno.zoo.service.EnrichmentService;
@@ -58,15 +59,15 @@ public class EnrichmentController {
 		return ret;
 	}
 
-	@PostMapping(path = "signUpUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "addUser", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public StandardReturnObject signUp(@RequestBody UserSignUp user) {
+	public StandardReturnObject addUser(@RequestBody UserSignUp user) {
 		StandardReturnObject validation = new StandardReturnObject();
 		
 		if(!usernameValid(user.getUsername())) {
 			validation.setError(true, USERNAME_LENGTH_ERROR_MSG);
 		} else {
-			validation = service.signUp(user);
+			validation = service.addUser(user);
 		}
 		
 		return validation;
@@ -89,6 +90,12 @@ public class EnrichmentController {
 		return service.submitNewItem(form);
 	}
 	
+	@PostMapping(path = "removeUsers", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject removeUsers(@RequestBody List<UserListInfo> users) {
+		return service.removeUsers(users);
+	}
+	
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<DepartmentInfo> getDepartmentsFromDb() {
 		return service.getDepartments();
@@ -107,6 +114,11 @@ public class EnrichmentController {
 	@GetMapping(path = "items", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ItemInfo> getItemsFromDb() {
 		return service.getItems();
+	}
+	
+	@GetMapping(path = "userList", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<UserListInfo> getUserList() {
+		return service.getUsers();
 	}
 
 	private boolean usernameValid(String username) {

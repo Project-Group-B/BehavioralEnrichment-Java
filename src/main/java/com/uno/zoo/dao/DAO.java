@@ -11,6 +11,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
 
 import com.uno.zoo.dto.CategoryInfo;
@@ -21,6 +23,7 @@ import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
+import com.uno.zoo.dto.UserListInfo;
 import com.uno.zoo.dto.UserLogIn;
 import com.uno.zoo.dto.UserSignUp;
 
@@ -33,6 +36,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String GET_CATEGORIES_SQL = "SELECT Category_Id, Category_Name, Category_Description FROM category ORDER BY Category_Name asc";
 	private static final String GET_SPECIES_SQL = "SELECT Species_Id, Species_Name, Species_Description, Species_IsisNumber FROM species ORDER BY Species_Name ASC";
 	private static final String GET_ITEMS_SQL = "SELECT Item_Id, Item_Name FROM item ORDER BY Item_Name ASC";
+	private static final String GET_USERS_SQL = "SELECT a.User_Id, a.User_Name, a.User_FirstName, a.User_LastName, b.Department_Name from user as a INNER JOIN department as b ON a.User_Department=b.Department_Id ORDER BY User_Id ASC";
 	private static final String ENRICHMENT_REQUEST_FORM_SQL = "INSERT INTO enrichment_experience "
 			+ "(Enrichment_Department, Enrichment_species, Enrichment_Name, Enrichment_Description, "
 			+ "Enrichment_PresentationMethod, Enrichment_TimeStart, Enrichment_Frequency, "
@@ -44,6 +48,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			+ ":lifeStrategies, :previousUse, :safetyQuestions, :risksHazards, :concerns, :expectedBehavior,"
 			+ ":source, :timeRequired, :construction, :volunteers, :submitter, :dateSubmitted)";
 	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_Photo, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
+	private static final String REMOVE_USER_SQL = "DELETE FROM user WHERE User_Id = :userId AND User_Name = :username";
 	
 	public DAO(DataSource dataSource) {
 		super.setDataSource(dataSource);
@@ -92,7 +97,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	 * @throws SQLException
 	 * @throws Exception
 	 */
-	public StandardReturnObject signUp(UserSignUp user) throws DataAccessException, SQLException, Exception {
+	public StandardReturnObject addUser(UserSignUp user) throws DataAccessException, SQLException, Exception {
 		StandardReturnObject retObject = new StandardReturnObject();
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		
@@ -108,10 +113,10 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			
 			int rowsAffected = getNamedParameterJdbcTemplate().update(ADD_USER_SQL, params);
 			if(rowsAffected <= 0) {
-				throw new Exception("Number rows affected when signing up was less than 1.");
+				throw new Exception("Number rows affected when adding user was less than 1.");
 			}
 			
-			retObject.setMessage(rowsAffected > 0 ? "You're all signed up! Returning to login..." : "Error signing up");
+			retObject.setMessage(rowsAffected > 0 ? "User successfully added" : "Error adding user");
 		}
 		
 		return retObject;
@@ -188,6 +193,20 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		}
 		
 		retObject.setMessage(rowsAffected > 0 ? "Item successfully entered!" : "Error entering item");
+		return retObject;
+	}
+	
+	public StandardReturnObject removeUsers(List<UserListInfo> users) throws DataAccessException, Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		
+		SqlParameterSource[] batchArgs = SqlParameterSourceUtils.createBatch(users.toArray());
+		int[] rowsAffected = getNamedParameterJdbcTemplate().batchUpdate(REMOVE_USER_SQL, batchArgs);
+		
+		for(int i : rowsAffected) {
+			if(i == 0) {
+				throw new Exception("Number rows affected when removing users was less than 1");
+			}
+		}
 		return retObject;
 	}
 	
@@ -288,6 +307,26 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		};
 		
 		return getNamedParameterJdbcTemplate().query(GET_ITEMS_SQL, rowMapper);
+	}
+	
+	public List<UserListInfo> getUsers() throws SQLException, DataAccessException {
+		ResultSetExtractor<List<UserListInfo>> rowMapper = new ResultSetExtractor<List<UserListInfo>>() {
+			@Override public List<UserListInfo> extractData(ResultSet rs) throws SQLException {
+				List<UserListInfo> info = new ArrayList<>();
+				while(rs.next()) {
+					UserListInfo newUser = new UserListInfo();
+					newUser.setUserId(rs.getString("User_Id"));
+					newUser.setUsername(rs.getString("User_Name"));
+					newUser.setFirstName(rs.getString("User_FirstName"));
+					newUser.setLastName(rs.getString("User_LastName"));
+					newUser.setDepartment(rs.getString("Department_Name"));
+					info.add(newUser);
+				}
+				return info;
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_USERS_SQL, rowMapper);
 	}
 	
 	/**

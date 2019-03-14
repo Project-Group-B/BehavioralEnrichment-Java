@@ -16,6 +16,7 @@ import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
+import com.uno.zoo.dto.UserListInfo;
 import com.uno.zoo.dto.UserLogIn;
 import com.uno.zoo.dto.UserSignUp;
 
@@ -55,20 +56,20 @@ public class EnrichmentService {
 	 * @param user {@link UserSignUp} information
 	 * @return {@link StandardReturnObject} with success/error message, depending on if there was an error
 	 */
-	public StandardReturnObject signUp(UserSignUp user) {
+	public StandardReturnObject addUser(UserSignUp user) {
 		StandardReturnObject ret = new StandardReturnObject();
 		
 		try {
-			ret = dao.signUp(user);
+			ret = dao.addUser(user);
 			if(!ret.isError()) {
-				LOGGER.info("user '{}' signed up", user.getUsername());
+				LOGGER.info("user '{}' added", user.getUsername());
 			} else {
-				LOGGER.info("error signing up user '{}': {}", user.getUsername(), ret.getErrorMsg());
+				LOGGER.info("error adding user '{}': {}", user.getUsername(), ret.getErrorMsg());
 			}
 		} catch(Exception e) {
-			LOGGER.error("Error signing user up:");
+			LOGGER.error("Error adding user:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true, "Error signing up. Please try again.");
+			ret.setError(true, "Error add user. Please try again.");
 		}
 		
 		return ret;
@@ -102,6 +103,21 @@ public class EnrichmentService {
 			LOGGER.info("Error inserting new item into database:");
 			LOGGER.error(e.getMessage(), e);
 			ret.setError(true, "Error inserting item (with thrown exception)");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject removeUsers(List<UserListInfo> users) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.removeUsers(users);
+			ret.setMessage("Successfully removed user(s)!");
+		} catch(Exception e) {
+			LOGGER.info("Error removing users from database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error removing user(s) - with thrown exception");
 		}
 		
 		return ret;
@@ -169,5 +185,18 @@ public class EnrichmentService {
 		}
 		
 		return items;
+	}
+	
+	public List<UserListInfo> getUsers() {
+		List<UserListInfo> users = new ArrayList<>();
+		
+		try {
+			users = dao.getUsers();
+		} catch(Exception e) {
+			LOGGER.error("Error getting users:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return users;
 	}
 }
