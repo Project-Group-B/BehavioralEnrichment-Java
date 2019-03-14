@@ -14,8 +14,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
 import com.uno.zoo.dto.CategoryInfo;
-import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.CompleteRequestForm;
+import com.uno.zoo.dto.DepartmentInfo;
+import com.uno.zoo.dto.ItemForm;
+import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
@@ -30,6 +32,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String GET_DEPARTMENTS_SQL = "SELECT Department_Id, Department_Name FROM department ORDER BY Department_Name asc";
 	private static final String GET_CATEGORIES_SQL = "SELECT Category_Id, Category_Name, Category_Description FROM category ORDER BY Category_Name asc";
 	private static final String GET_SPECIES_SQL = "SELECT Species_Id, Species_Name, Species_Description, Species_IsisNumber FROM species ORDER BY Species_Name ASC";
+	private static final String GET_ITEMS_SQL = "SELECT Item_Id, Item_Name FROM item ORDER BY Item_Name ASC";
 	private static final String ENRICHMENT_REQUEST_FORM_SQL = "INSERT INTO enrichment_experience "
 			+ "(Enrichment_Department, Enrichment_species, Enrichment_Name, Enrichment_Description, "
 			+ "Enrichment_PresentationMethod, Enrichment_TimeStart, Enrichment_Frequency, "
@@ -40,6 +43,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			+ "(:dept, :species, :name, :description, :presentationMethod, :timeStart, :frequency, "
 			+ ":lifeStrategies, :previousUse, :safetyQuestions, :risksHazards, :concerns, :expectedBehavior,"
 			+ ":source, :timeRequired, :construction, :volunteers, :submitter, :dateSubmitted)";
+	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_Photo, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
 	
 	public DAO(DataSource dataSource) {
 		super.setDataSource(dataSource);
@@ -104,12 +108,86 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			
 			int rowsAffected = getNamedParameterJdbcTemplate().update(ADD_USER_SQL, params);
 			if(rowsAffected <= 0) {
-				throw new Exception("Rows affected when signing up was less than 1.");
+				throw new Exception("Number rows affected when signing up was less than 1.");
 			}
 			
 			retObject.setMessage(rowsAffected > 0 ? "You're all signed up! Returning to login..." : "Error signing up");
 		}
 		
+		return retObject;
+	}
+	
+	/**
+	 * Accesses the database and inserts the complete item enrichment request form
+	 * @param form {@link CompleteRequestForm}
+	 * @return {@link StandardReturnObject} with no parameters filled out - calling function responsible for
+	 * that.
+	 * @throws DataAccessException
+	 */
+	public StandardReturnObject insertRequestForm(CompleteRequestForm form) throws DataAccessException {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		// TODO: Enrichment_Item - id from 'item' table
+		// TODO: Enrichment_Animal - id from 'animal' table, can be null
+		// TODO: Enrichment_Location - id from 'location' table
+		// TODO: Enrichment_TimeEnd - datetime
+		// TODO: Enrichment_Goal - varchar(1000)
+		// TODO: Enrichment_Inventory - varchar(10)
+		// TODO: Enrichment_IsApproved - int
+		params.addValue("dept", form.getDepartment().getDepartmentId()); // id from 'department' table
+		params.addValue("species", form.getSpecies().getSpeciesId()); // id from 'species' table
+		params.addValue("name", form.getEnrichmentName()); // have
+		params.addValue("description", form.getEnrichmentDescription()); // have
+		params.addValue("presentationMethod", form.getEnrichmentPresentation()); // have
+		params.addValue("timeStart", form.getTimeRequired()); // TODO: needs to be type datetime
+		params.addValue("frequency", form.getEnrichmentFrequency()); // TODO: needs to be int
+		params.addValue("lifeStrategies", form.isLifeStrategiesWksht()); // TODO: needs to be int
+		params.addValue("previousUse", form.isAnotherDeptZoo()); // TODO: needs to be int
+		params.addValue("safetyQuestions", form.isSafetyQuestion()); // TODO: needs to be int
+		params.addValue("risksHazards", form.isRisksQuestion()); // TODO: needs to be int
+		params.addValue("concerns", form.getSafetyComment()); // have
+		params.addValue("expectedBehavior", form.getNaturalBehaviors()); // have
+		params.addValue("source", form.getSource()); // have
+		params.addValue("timeRequired", form.getTimeRequired()); // TODO: needs to be int
+		params.addValue("construction", form.getWhoConstructs()); // have
+		params.addValue("volunteers", form.isVolunteerDocentUtilized()); // TODO: needs to be int
+		params.addValue("submitter", form.getNameOfSubmitter()); // id from 'user' table
+		params.addValue("dateSubmitted", form.getDateOfSubmission()); // have
+		
+		// Convert array of categories into a single string
+		@SuppressWarnings("unused")
+		String str = String.join(",", form.getEnrichmentCategory());
+		
+//		getNamedParameterJdbcTemplate().query(ENRICHMENT_REQUEST_FORM_SQL, rowMapper);
+		return retObject;
+	}
+	
+	/**
+	 * Accesses the database and inserts the new item.
+	 * @param form {@link ItemForm} with all fields filled out
+	 * @return {@link StandardReturnObject}
+	 */
+	public StandardReturnObject insertNewItem(ItemForm form) throws DataAccessException, Exception {
+		// TODO: submit image options:
+	    // https://stackoverflow.com/questions/1665730/images-in-mysql
+	    // https://stackoverflow.com/questions/3014578/storing-images-in-mysql
+	    // https://stackoverflow.com/questions/6472233/can-i-store-images-in-mysql
+	    // https://www.quora.com/What-is-the-best-way-to-store-100-images-in-a-MySQL-database-in-this-case
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("name", form.getItemName());
+		params.addValue("photo", form.getPhoto());
+		params.addValue("approval", 2);
+		params.addValue("comments", form.getComments());
+		params.addValue("safetyNotes", form.getSafetyNotes());
+		params.addValue("exceptions", form.getExceptions());
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(INSERT_NEW_ITEM_SQL, params);
+		if(rowsAffected <= 0) {
+			throw new Exception("Number rows affected when inserting new item was less than 1.");
+		}
+		
+		retObject.setMessage(rowsAffected > 0 ? "Item successfully entered!" : "Error entering item");
 		return retObject;
 	}
 	
@@ -163,73 +241,6 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	}
 	
 	/**
-	 * Accesses the database and inserts the complete item enrichment request form
-	 * @param form {@link CompleteRequestForm}
-	 * @return {@link StandardReturnObject} with no parameters filled out - calling function responsible for
-	 * that.
-	 * @throws DataAccessException
-	 */
-	public StandardReturnObject insertRequestForm(CompleteRequestForm form) throws DataAccessException {
-		StandardReturnObject retObject = new StandardReturnObject();
-		MapSqlParameterSource params = new MapSqlParameterSource();
-		// TODO: Enrichment_Item - id from 'item' table
-		// TODO: Enrichment_Animal - id from 'animal' table, can be null
-		// TODO: Enrichment_Location - id from 'location' table
-		// TODO: Enrichment_TimeEnd - datetime
-		// TODO: Enrichment_Goal - varchar(1000)
-		// TODO: Enrichment_Inventory - varchar(10)
-		// TODO: Enrichment_IsApproved - int
-		params.addValue("dept", form.getDepartment().getDepartmentId()); // id from 'department' table
-		params.addValue("species", form.getSpecies().getSpeciesId()); // id from 'species' table
-		params.addValue("name", form.getEnrichmentName()); // have
-		params.addValue("description", form.getEnrichmentDescription()); // have
-		params.addValue("presentationMethod", form.getEnrichmentPresentation()); // have
-		params.addValue("timeStart", form.getTimeRequired()); // TODO: needs to be type datetime
-		params.addValue("frequency", form.getEnrichmentFrequency()); // TODO: needs to be int
-		params.addValue("lifeStrategies", form.isLifeStrategiesWksht()); // TODO: needs to be int
-		params.addValue("previousUse", form.isAnotherDeptZoo()); // TODO: needs to be int
-		params.addValue("safetyQuestions", form.isSafetyQuestion()); // TODO: needs to be int
-		params.addValue("risksHazards", form.isRisksQuestion()); // TODO: needs to be int
-		params.addValue("concerns", form.getSafetyComment()); // have
-		params.addValue("expectedBehavior", form.getNaturalBehaviors()); // have
-		params.addValue("source", form.getSource()); // have
-		params.addValue("timeRequired", form.getTimeRequired()); // TODO: needs to be int
-		params.addValue("construction", form.getWhoConstructs()); // have
-		params.addValue("volunteers", form.isVolunteerDocentUtilized()); // TODO: needs to be int
-		params.addValue("submitter", form.getNameOfSubmitter()); // id from 'user' table
-		params.addValue("dateSubmitted", form.getDateOfSubmission()); // have
-		
-		// Convert array of categories into a single string
-		@SuppressWarnings("unused")
-		String str = String.join(",", form.getEnrichmentCategory());
-		
-//		getNamedParameterJdbcTemplate().query(ENRICHMENT_REQUEST_FORM_SQL, rowMapper);
-		return retObject;
-	}
-	
-	/**
-	 * Accesses the database and returns whether the given username is taken by another user.
-	 * @param username String username to check the existence of in the database.
-	 * @return {@code true} if the username exists in the database, {@code false} otherwise
-	 */
-	private boolean usernameExists(String username) {
-		MapSqlParameterSource params = new MapSqlParameterSource();
-		params.addValue("username", username);
-		
-		ResultSetExtractor<Boolean> existsRowMapper = new ResultSetExtractor<Boolean>() {
-			@Override public Boolean extractData(ResultSet rs) throws SQLException {
-				if(rs.next()) {
-					return Boolean.valueOf(rs.getBoolean("doesExist"));
-				} else {
-					return Boolean.FALSE;
-				}
-			}
-		};
-		
-		return getNamedParameterJdbcTemplate().query(USERNAME_EXISTS_SQL, params, existsRowMapper).booleanValue();
-	}
-
-	/**
 	 * Accesses the database to retrieve all species' info.
 	 * @return A {@link java.util.ArrayList} of {@link SpeciesInfo}
 	 * @throws NumberFormatException
@@ -253,5 +264,51 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		};
 		
 		return getNamedParameterJdbcTemplate().query(GET_SPECIES_SQL, rowMapper);
+	}
+	
+	/**
+	 * Accesses the database to retrieve all items' ids and names.
+	 * @return A {@link java.util.ArrayList} of {@link ItemInfo}
+	 * @throws NumberFormatException When converting item id from String to int
+	 * @throws SQLException When traversing the returned rows
+	 * @throws DataAccessException When running the SQL on the database
+	 */
+	public List<ItemInfo> getItems() throws NumberFormatException, SQLException, DataAccessException {
+		ResultSetExtractor<List<ItemInfo>> rowMapper = new ResultSetExtractor<List<ItemInfo>>() {
+			@Override public List<ItemInfo> extractData(ResultSet rs) throws SQLException, NumberFormatException {
+				List<ItemInfo> info = new ArrayList<>();
+				while(rs.next()) {
+					ItemInfo newItem = new ItemInfo();
+					newItem.setId(Integer.parseInt(rs.getString("Item_Id")));
+					newItem.setName(rs.getString("Item_Name"));
+					info.add(newItem);
+				}
+				return info;
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_ITEMS_SQL, rowMapper);
+	}
+	
+	/**
+	 * Accesses the database and returns whether the given username is taken by another user.
+	 * @param username String username to check the existence of in the database.
+	 * @return {@code true} if the username exists in the database, {@code false} otherwise
+	 */
+	private boolean usernameExists(String username) {
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("username", username);
+		
+		ResultSetExtractor<Boolean> existsRowMapper = new ResultSetExtractor<Boolean>() {
+			@Override public Boolean extractData(ResultSet rs) throws SQLException {
+				if(rs.next()) {
+					return Boolean.valueOf(rs.getBoolean("doesExist"));
+				} else {
+					return Boolean.FALSE;
+				}
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(USERNAME_EXISTS_SQL, params, existsRowMapper).booleanValue();
 	}
 }

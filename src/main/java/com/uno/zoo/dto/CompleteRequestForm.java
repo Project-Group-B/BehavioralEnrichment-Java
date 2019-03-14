@@ -13,6 +13,7 @@ public class CompleteRequestForm {
 	private String housed;
 	private String activityCycle;
 	private String age;
+	private int itemId;
 	private String enrichmentName;
 	private String enrichmentDayNightTime;
 	private String enrichmentDescription;
@@ -63,6 +64,12 @@ public class CompleteRequestForm {
 	}
 	public void setAge(String age) {
 		this.age = age;
+	}
+	public int getItemId() {
+		return itemId;
+	}
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
 	}
 	public String getEnrichmentName() {
 		return enrichmentName;

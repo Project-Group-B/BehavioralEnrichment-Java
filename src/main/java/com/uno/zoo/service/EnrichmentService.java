@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.uno.zoo.dao.DAO;
 import com.uno.zoo.dto.CategoryInfo;
-import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.CompleteRequestForm;
+import com.uno.zoo.dto.DepartmentInfo;
+import com.uno.zoo.dto.ItemForm;
+import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
@@ -91,6 +93,20 @@ public class EnrichmentService {
 		return ret;
 	}
 	
+	public StandardReturnObject submitNewItem(ItemForm form) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.insertNewItem(form);
+		} catch(Exception e) {
+			LOGGER.info("Error inserting new item into database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error inserting item (with thrown exception)");
+		}
+		
+		return ret;
+	}
+	
 	/**
 	 * Gets a list of all the departments in the database.
 	 * @return A {@link java.util.ArrayList} of {@link DepartmentInfo}
@@ -140,5 +156,18 @@ public class EnrichmentService {
 		}
 		
 		return species;
+	}
+	
+	public List<ItemInfo> getItems() {
+		List<ItemInfo> items = new ArrayList<>();
+		
+		try {
+			items = dao.getItems();
+		} catch(Exception e) {
+			LOGGER.error("Error getting items:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return items;
 	}
 }

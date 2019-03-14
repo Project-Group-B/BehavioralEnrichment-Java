@@ -13,6 +13,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.DepartmentInfo;
+import com.uno.zoo.dto.ItemForm;
+import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
@@ -81,6 +83,12 @@ public class EnrichmentController {
 		return service.submitEnrichmentRequest(form);
 	}
 	
+	@PostMapping(path = "newItem", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject submitNewItem(@RequestBody ItemForm form) {
+		return service.submitNewItem(form);
+	}
+	
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<DepartmentInfo> getDepartmentsFromDb() {
 		return service.getDepartments();
@@ -94,6 +102,11 @@ public class EnrichmentController {
 	@GetMapping(path = "species", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<SpeciesInfo> getSpeciesFromDb() {
 		return service.getSpecies();
+	}
+	
+	@GetMapping(path = "items", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<ItemInfo> getItemsFromDb() {
+		return service.getItems();
 	}
 
 	private boolean usernameValid(String username) {
