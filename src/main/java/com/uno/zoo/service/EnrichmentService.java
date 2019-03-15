@@ -123,6 +123,51 @@ public class EnrichmentService {
 		return ret;
 	}
 	
+	public StandardReturnObject resetPasswords(List<UserListInfo> users) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.resetPasswords(users);
+			ret.setMessage("Successfully reset passwords for selected users.");
+		} catch(Exception e) {
+			LOGGER.info("Error resetting passwords in database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error resetting passwords - with thrown exception");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject addNewDepartment(DepartmentInfo dept) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.addNewDepartment(dept);
+			ret.setMessage("Successfully added department '" + dept.getDepartmentName() + "'");
+		} catch(Exception e) {
+			LOGGER.info("Error adding department into database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error adding department - with thrown exception");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject removeDepartment(int deptId) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.removeDepartment(deptId);
+			ret.setMessage("Successfully removed department");
+		} catch(Exception e) {
+			LOGGER.info("Error removing department from database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error removing department - with thrown exception");
+		}
+		
+		return ret;
+	}
+	
 	/**
 	 * Gets a list of all the departments in the database.
 	 * @return A {@link java.util.ArrayList} of {@link DepartmentInfo}

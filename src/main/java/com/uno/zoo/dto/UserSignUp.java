@@ -13,10 +13,6 @@ public class UserSignUp {
 	@NotNull
 	private String username;
 	
-	@Size(min=1)
-	@NotNull
-	private String password;
-	
 	@NotNull
 	private int status;
 	
@@ -36,12 +32,6 @@ public class UserSignUp {
 	}
 	public void setUsername(String username) {
 		this.username = username;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	public int getStatus() {
 		return status;

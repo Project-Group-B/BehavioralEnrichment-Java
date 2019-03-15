@@ -73,6 +73,18 @@ public class EnrichmentController {
 		return validation;
 	}
 	
+	@PostMapping(path = "removeUsers", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject removeUsers(@RequestBody List<UserListInfo> users) {
+		return service.removeUsers(users);
+	}
+	
+	@PostMapping(path = "resetUserPasswords", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject resetPasswords(@RequestBody List<UserListInfo> users) {
+		return service.resetPasswords(users);
+	}
+	
 	@PostMapping(path = "enrichmentRequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public StandardReturnObject submitEnrichmentRequest(@RequestBody CompleteRequestForm form) {
@@ -90,10 +102,16 @@ public class EnrichmentController {
 		return service.submitNewItem(form);
 	}
 	
-	@PostMapping(path = "removeUsers", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "newDept", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public StandardReturnObject removeUsers(@RequestBody List<UserListInfo> users) {
-		return service.removeUsers(users);
+	public StandardReturnObject addNewDepartment(@RequestBody DepartmentInfo deptName) {
+		return service.addNewDepartment(deptName);
+	}
+	
+	@PostMapping(path = "removeDept", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject removeDepartment(@RequestBody DepartmentInfo deptId) {
+		return service.removeDepartment(deptId.getDepartmentId());
 	}
 	
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)

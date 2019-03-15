@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -49,6 +50,9 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			+ ":source, :timeRequired, :construction, :volunteers, :submitter, :dateSubmitted)";
 	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_Photo, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
 	private static final String REMOVE_USER_SQL = "DELETE FROM user WHERE User_Id = :userId AND User_Name = :username";
+	private static final String RESET_USER_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:defaultPassword, 256) WHERE User_Id :id";
+	private static final String ADD_NEW_DEPARTMENT_SQL = "INSERT INTO department (Department_Name) VALUES (:deptName)";
+	private static final String REMOVE_DEPARTMENT_BY_ID_SQL = "DELETE FROM department WHERE Department_Id = :id";
 	
 	public DAO(DataSource dataSource) {
 		super.setDataSource(dataSource);
@@ -104,8 +108,9 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		if(usernameExists(user.getUsername())) {
 			retObject.setError(true, "Username taken");
 		} else {
+			final String defaultPassword = getUserDefaultPassword(user.getFirstName(), user.getLastName());
 			params.addValue("username", user.getUsername());
-			params.addValue("password", user.getPassword());
+			params.addValue("password", defaultPassword);
 			params.addValue("status", user.getStatus());
 			params.addValue("department", user.getDepartment().getDepartmentId());
 			params.addValue("firstName", user.getFirstName());
@@ -206,6 +211,48 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			if(i == 0) {
 				throw new Exception("Number rows affected when removing users was less than 1");
 			}
+		}
+		return retObject;
+	}
+	
+	public StandardReturnObject resetPasswords(List<UserListInfo> users) throws DataAccessException, Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		
+		for(UserListInfo singleUser : users) {
+			params.addValue("id", singleUser.getUserId());
+			params.addValue("defaultPassword", getUserDefaultPassword(singleUser.getFirstName(), singleUser.getLastName()));
+			int rowsAffected = getNamedParameterJdbcTemplate().update(RESET_USER_PASSWORD_SQL, params);
+			if(rowsAffected <= 0) {
+				retObject.setError(true, "Unable to reset password for user " + singleUser.getUsername());
+			}
+		}
+
+		return retObject;
+	}
+	
+	public StandardReturnObject addNewDepartment(DepartmentInfo dept) throws DataAccessException, Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("deptName", dept.getDepartmentName());
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(ADD_NEW_DEPARTMENT_SQL, params);
+		
+		if(rowsAffected <= 0) {
+			throw new Exception("Number rows affected when inserting new department was less than 1.");
+		}
+		return retObject;
+	}
+	
+	public StandardReturnObject removeDepartment(int deptId) throws DataAccessException, Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("id", deptId);
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(REMOVE_DEPARTMENT_BY_ID_SQL, params);
+		
+		if(rowsAffected <= 0) {
+			throw new Exception("Number rows affected when removing department was less than 1.");
 		}
 		return retObject;
 	}
@@ -349,5 +396,23 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		};
 		
 		return getNamedParameterJdbcTemplate().query(USERNAME_EXISTS_SQL, params, existsRowMapper).booleanValue();
+	}
+	
+	/**
+	 * Returns a default password in the format of 
+	 * {@literal <lowercase first letter of first name><lowercase first 5 letters of last name>}.
+	 * Function {@link String#toLowerCase()} is used on both first and last names before getting the characters.
+	 * <br>Example: "John Doe" -> "jdoe"
+	 * <br>Example: "Keanu Reeves" -> "kreeve"
+	 * @param firstName User first name
+	 * @param lastName User last name
+	 * @return User default password as a string of length 6
+	 */
+	private String getUserDefaultPassword(String firstName, String lastName) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(StringUtils.left(firstName.toLowerCase(), 1));
+		builder.append(StringUtils.left(lastName.toLowerCase(), 5));
+		
+		return builder.toString();
 	}
 }
