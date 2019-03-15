@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import com.uno.zoo.dto.CategoryInfo;
+import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
@@ -83,6 +84,12 @@ public class EnrichmentController {
 	@ResponseBody
 	public StandardReturnObject resetPasswords(@RequestBody List<UserListInfo> users) {
 		return service.resetPasswords(users);
+	}
+	
+	@PostMapping(path = "changePassword", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject changePassword(@RequestBody ChangePasswordForm form) {
+		return service.changePassword(form);
 	}
 	
 	@PostMapping(path = "enrichmentRequest", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
 
 import com.uno.zoo.dto.CategoryInfo;
+import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.ItemForm;
@@ -30,7 +31,7 @@ import com.uno.zoo.dto.UserSignUp;
 
 @Component
 public class DAO extends NamedParameterJdbcDaoSupport {
-	private static final String LOGIN_USER_SQL = "SELECT User_Id, User_Name, User_Status, User_FirstName, User_LastName, User_Department from user WHERE User_Name = :username AND User_Pass = sha2(:password, 256)";
+	private static final String LOGIN_USER_SQL = "SELECT a.User_Id, a.User_Name, a.User_Status, a.User_FirstName, a.User_LastName, b.Department_Name from user as a INNER JOIN department as b ON a.User_Department=b.Department_Id WHERE User_Name = :username AND User_Pass = sha2(:password, 256)";
 	private static final String USERNAME_EXISTS_SQL = "SELECT EXISTS (SELECT 1 FROM user WHERE User_Name = :username) AS doesExist";
 	private static final String ADD_USER_SQL = "INSERT INTO user (User_Name, User_Pass, User_Status, User_Department, User_FirstName, User_LastName) VALUES (:username, sha2(:password, 256), :status, :department, :firstName, :lastName)";
 	private static final String GET_DEPARTMENTS_SQL = "SELECT Department_Id, Department_Name FROM department ORDER BY Department_Name asc";
@@ -51,6 +52,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_Photo, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
 	private static final String REMOVE_USER_SQL = "DELETE FROM user WHERE User_Id = :userId AND User_Name = :username";
 	private static final String RESET_USER_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:defaultPassword, 256) WHERE User_Id :id";
+	private static final String CHANGE_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:newPassword, 256) WHERE User_Id = :id AND User_Name = :username AND User_Pass = sha2(:oldPassword, 256)";
 	private static final String ADD_NEW_DEPARTMENT_SQL = "INSERT INTO department (Department_Name) VALUES (:deptName)";
 	private static final String REMOVE_DEPARTMENT_BY_ID_SQL = "DELETE FROM department WHERE Department_Id = :id";
 	
@@ -79,7 +81,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 					info.setLoggedIn(true);
 					info.setId(Integer.parseInt(rs.getString("User_Id")));
 					info.setUsername(rs.getString("User_Name"));
-					info.setDepartment(rs.getString("User_Department"));
+					info.setDepartment(rs.getString("Department_Name"));
 					info.setFirstName(rs.getString("User_FirstName"));
 					info.setLastName(rs.getString("User_LastName"));
 					info.setAdmin(rs.getString("User_Status").equalsIgnoreCase("1"));
@@ -228,6 +230,22 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			}
 		}
 
+		return retObject;
+	}
+	
+	public StandardReturnObject changePassword(ChangePasswordForm form) throws DataAccessException, Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("id", form.getUserId());
+		params.addValue("username", form.getUserName());
+		params.addValue("oldPassword", form.getOldPassword());
+		params.addValue("newPassword", form.getNewPassword());
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(CHANGE_PASSWORD_SQL, params);
+		
+		if(rowsAffected <= 0) {
+			retObject.setError(true, "Unable to change password");
+		}
 		return retObject;
 	}
 	

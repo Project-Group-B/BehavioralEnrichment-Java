@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.uno.zoo.dao.DAO;
 import com.uno.zoo.dto.CategoryInfo;
+import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.ItemForm;
@@ -133,6 +134,21 @@ public class EnrichmentService {
 			LOGGER.info("Error resetting passwords in database:");
 			LOGGER.error(e.getMessage(), e);
 			ret.setError(true, "Error resetting passwords - with thrown exception");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject changePassword(ChangePasswordForm form) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.changePassword(form);
+			ret.setMessage("Successfully changed password.");
+		} catch(Exception e) {
+			LOGGER.info("Error changing password in database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error changing password - with thrown exception");
 		}
 		
 		return ret;
