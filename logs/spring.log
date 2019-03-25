@@ -1,46 +1,29 @@
-2019-02-08 14:34:30.647  INFO 10508 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Donovan-School with PID 10508 (C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java\target\classes started by Donovan in C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java)
-2019-02-08 14:34:30.663  INFO 10508 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-02-08 14:34:37.588  WARN 10508 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-02-08 14:34:38.477  INFO 10508 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 8.375 seconds (JVM running for 18.047)
-2019-02-08 14:49:24.194  INFO 10508 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'test' signed in.
-2019-02-08 15:15:16.808  WARN 10508 --- [http-nio-8080-exec-9] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Cannot deserialize instance of `java.lang.String` out of START_ARRAY token; nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot deserialize instance of `java.lang.String` out of START_ARRAY token
- at [Source: (PushbackInputStream); line: 1, column: 362] (through reference chain: com.uno.zoo.dto.RequestForm["enrichmentCategory"])]
-2019-02-08 15:15:41.320  WARN 10508 --- [http-nio-8080-exec-10] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Cannot deserialize instance of `java.lang.String` out of START_ARRAY token; nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot deserialize instance of `java.lang.String` out of START_ARRAY token
- at [Source: (PushbackInputStream); line: 1, column: 362] (through reference chain: com.uno.zoo.dto.RequestForm["enrichmentCategory"])]
-2019-02-08 17:18:53.157  INFO 1020 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Donovan-School with PID 1020 (C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java\target\classes started by Donovan in C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java)
-2019-02-08 17:18:53.164  INFO 1020 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-02-08 17:18:59.232  WARN 1020 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-02-08 17:19:00.115  INFO 1020 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 7.409 seconds (JVM running for 10.972)
-2019-02-08 17:19:17.080  INFO 1020 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'test' signed in.
-2019-02-08 18:07:43.114  INFO 14648 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Donovan-School with PID 14648 (C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java\target\classes started by Donovan in C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java)
-2019-02-08 18:07:43.119  INFO 14648 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-02-08 18:07:49.542  WARN 14648 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-02-08 18:07:50.362  INFO 14648 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 7.756 seconds (JVM running for 11.704)
-2019-03-15 17:33:37.974  INFO 2868 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Donovan-School with PID 2868 (C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java\target\classes started by Donovan in C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java)
-2019-03-15 17:33:37.974  INFO 2868 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-03-15 17:33:44.803  WARN 2868 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-03-15 17:33:45.693  INFO 2868 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 8.232 seconds (JVM running for 17.915)
-2019-03-15 17:35:06.558  INFO 2868 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'test' signed in.
-2019-03-15 18:04:26.932  INFO 10528 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Donovan-School with PID 10528 (C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java\target\classes started by Donovan in C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java)
-2019-03-15 18:04:26.937  INFO 10528 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-03-15 18:04:34.025  WARN 10528 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-03-15 18:04:34.842  INFO 10528 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 8.544 seconds (JVM running for 12.427)
-2019-03-15 18:08:53.924  INFO 4544 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Donovan-School with PID 4544 (C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java\target\classes started by Donovan in C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java)
-2019-03-15 18:08:53.924  INFO 4544 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-03-15 18:09:00.320  WARN 4544 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-03-15 18:09:01.144  INFO 4544 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 7.686 seconds (JVM running for 11.384)
-2019-03-15 18:09:16.676  INFO 4544 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'test' signed in.
-2019-03-15 18:11:17.952  INFO 4544 --- [http-nio-8080-exec-3] com.uno.zoo.service.EnrichmentService    : user 'test' signed in.
-2019-03-15 18:12:21.021  INFO 4544 --- [http-nio-8080-exec-4] com.uno.zoo.service.EnrichmentService    : user 'test' signed in.
-2019-03-15 18:15:33.414  INFO 4544 --- [http-nio-8080-exec-7] com.uno.zoo.service.EnrichmentService    : user 'test' signed in.
-2019-03-15 18:16:08.438  INFO 4544 --- [http-nio-8080-exec-8] com.uno.zoo.service.EnrichmentService    : user 'test' signed in.
-2019-03-15 18:42:33.131  INFO 11408 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Donovan-School with PID 11408 (C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java\target\classes started by Donovan in C:\Users\Donovan\eclipse-spring-boot-workspace\BehaviorEnrichment-Java)
-2019-03-15 18:42:33.146  INFO 11408 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
-2019-03-15 18:42:39.389  WARN 11408 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2019-03-15 18:42:40.202  INFO 11408 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 7.539 seconds (JVM running for 11.219)
-2019-03-15 18:43:30.615  INFO 11408 --- [http-nio-8080-exec-1] com.uno.zoo.service.EnrichmentService    : user 'test' signed in.
-2019-03-15 18:44:11.362  INFO 11408 --- [http-nio-8080-exec-7] com.uno.zoo.service.EnrichmentService    : user 'pass' added
-2019-03-15 18:44:24.295  INFO 11408 --- [http-nio-8080-exec-8] com.uno.zoo.service.EnrichmentService    : user 'pass' signed in.
-2019-03-15 18:44:52.647  INFO 11408 --- [http-nio-8080-exec-1] com.uno.zoo.service.EnrichmentService    : user 'pass' signed in.
-2019-03-15 18:44:59.511  INFO 11408 --- [http-nio-8080-exec-3] com.uno.zoo.service.EnrichmentService    : user 'pass' not signed in.
-2019-03-15 18:45:02.993  INFO 11408 --- [http-nio-8080-exec-4] com.uno.zoo.service.EnrichmentService    : user 'pass' signed in.
+2019-03-06 12:27:19.949  INFO 13796 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Frainbreeze with PID 13796 (C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java\target\classes started by Zach in C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java)
+2019-03-06 12:27:19.973  INFO 13796 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
+2019-03-06 12:27:40.202  WARN 13796 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-03-06 12:27:41.874  INFO 13796 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 23.784 seconds (JVM running for 45.641)
+2019-03-06 12:30:27.645  INFO 13796 --- [http-nio-8080-exec-9] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:31:08.815  INFO 13796 --- [http-nio-8080-exec-6] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:32:27.035  INFO 13796 --- [http-nio-8080-exec-3] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:34:18.171  INFO 13796 --- [http-nio-8080-exec-10] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:36:54.641  INFO 13796 --- [http-nio-8080-exec-7] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:37:38.803  INFO 13796 --- [http-nio-8080-exec-5] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:40:32.191  INFO 13796 --- [http-nio-8080-exec-3] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:40:44.222  INFO 13796 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:41:13.006  INFO 13796 --- [http-nio-8080-exec-1] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:44:10.962  INFO 13796 --- [http-nio-8080-exec-8] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 12:45:53.530  INFO 13796 --- [http-nio-8080-exec-5] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 14:05:49.506  WARN 13796 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=40m19s336ms431�s972ns).
+2019-03-06 17:36:09.739  INFO 13432 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Frainbreeze with PID 13432 (C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java\target\classes started by Zach in C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java)
+2019-03-06 17:36:09.746  INFO 13432 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
+2019-03-06 17:36:27.898  WARN 13432 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-03-06 17:36:30.063  INFO 13432 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 21.148 seconds (JVM running for 34.821)
+2019-03-06 17:37:26.454  INFO 13432 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 18:14:36.838  INFO 13432 --- [http-nio-8080-exec-5] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 18:32:12.314  INFO 6336 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Starting BehaviorEnrichmentJavaApplication on Frainbreeze with PID 6336 (C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java\target\classes started by Zach in C:\Users\Zach\Documents\aSpring2019\Capstone\PGB-Java\BehavioralEnrichment-Java)
+2019-03-06 18:32:12.322  INFO 6336 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : No active profile set, falling back to default profiles: default
+2019-03-06 18:32:26.288  WARN 6336 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-03-06 18:32:28.240  INFO 6336 --- [main] c.u.z.BehaviorEnrichmentJavaApplication  : Started BehaviorEnrichmentJavaApplication in 16.834 seconds (JVM running for 32.552)
+2019-03-06 18:32:52.368  INFO 6336 --- [http-nio-8080-exec-2] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 18:33:35.583  INFO 6336 --- [http-nio-8080-exec-4] com.uno.zoo.service.EnrichmentService    : user 'updog' signed in.
+2019-03-06 19:04:11.963  WARN 6336 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=29m20s662ms137�s526ns).
