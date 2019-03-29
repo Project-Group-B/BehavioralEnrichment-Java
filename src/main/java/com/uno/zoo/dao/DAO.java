@@ -16,12 +16,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
 
+import com.uno.zoo.dto.AnimalInfo;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
+import com.uno.zoo.dto.LocationInfo;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
@@ -36,9 +38,11 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String ADD_USER_SQL = "INSERT INTO user (User_Name, User_Pass, User_Status, User_Department, User_FirstName, User_LastName) VALUES (:username, sha2(:password, 256), :status, :department, :firstName, :lastName)";
 	private static final String GET_DEPARTMENTS_SQL = "SELECT Department_Id, Department_Name FROM department ORDER BY Department_Name asc";
 	private static final String GET_CATEGORIES_SQL = "SELECT Category_Id, Category_Name, Category_Description FROM category ORDER BY Category_Name asc";
-	private static final String GET_SPECIES_SQL = "SELECT Species_Id, Species_Name, Species_Description, Species_IsisNumber FROM species ORDER BY Species_Name ASC";
+	private static final String GET_SPECIES_SQL = "SELECT Species_Id, Species_Name, Species_Description FROM species ORDER BY Species_Name ASC";
 	private static final String GET_ITEMS_SQL = "SELECT Item_Id, Item_Name FROM item ORDER BY Item_Name ASC";
-	private static final String GET_USERS_SQL = "SELECT a.User_Id, a.User_Name, a.User_FirstName, a.User_LastName, b.Department_Name from user as a INNER JOIN department as b ON a.User_Department=b.Department_Id ORDER BY User_Id ASC";
+	private static final String GET_USERS_SQL = "SELECT a.User_Id, a.User_Name, a.User_FirstName, a.User_LastName, b.Department_Name FROM user AS a INNER JOIN department AS b ON a.User_Department=b.Department_Id ORDER BY User_Id ASC";
+	private static final String GET_ANIMALS_SQL = "SELECT animal.Animal_Id, animal.Animal_IsisNumber, species.Species_Name FROM animal INNER JOIN species ON animal.Animal_Species=species.Species_Id ORDER BY Animal_Id";
+	private static final String GET_LOCATIONS_SQL = "SELECT Location_Id, Location_Name, Location_Description FROM location ORDER BY Location_Name ASC";
 	private static final String ENRICHMENT_REQUEST_FORM_SQL = "INSERT INTO enrichment_experience "
 			+ "(Enrichment_Department, Enrichment_species, Enrichment_Name, Enrichment_Description, "
 			+ "Enrichment_PresentationMethod, Enrichment_TimeStart, Enrichment_Frequency, "
@@ -340,7 +344,6 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 					newSpecies.setSpeciesId(Integer.parseInt(rs.getString("Species_Id")));
 					newSpecies.setSpeciesName(rs.getString("Species_Name"));
 					newSpecies.setSpeciesDescription(rs.getString("Species_Description"));
-					newSpecies.setSpeciesIsisNumber(Integer.parseInt(rs.getString("Species_IsisNumber")));
 					info.add(newSpecies);
 				}
 				return info;
@@ -392,6 +395,42 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		};
 		
 		return getNamedParameterJdbcTemplate().query(GET_USERS_SQL, rowMapper);
+	}
+	
+	public List<AnimalInfo> getAnimals() throws SQLException, DataAccessException, NumberFormatException {
+		ResultSetExtractor<List<AnimalInfo>> rowMapper = new ResultSetExtractor<List<AnimalInfo>>() {
+			@Override public List<AnimalInfo> extractData(ResultSet rs) throws SQLException {
+				List<AnimalInfo> info = new ArrayList<>();
+				while(rs.next()) {
+					AnimalInfo newAnimal = new AnimalInfo();
+					newAnimal.setId(Integer.parseInt(rs.getString("Animal_Id")));
+					newAnimal.setIsisNumber(Integer.parseInt(rs.getString("Animal_IsisNumber")));
+					newAnimal.setSpecies(rs.getString("Species_Name"));
+					info.add(newAnimal);
+				}
+				return info;
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_ANIMALS_SQL, rowMapper);
+	}
+	
+	public List<LocationInfo> getLocations() {
+		ResultSetExtractor<List<LocationInfo>> rowMapper = new ResultSetExtractor<List<LocationInfo>>() {
+			@Override public List<LocationInfo> extractData(ResultSet rs) throws SQLException {
+				List<LocationInfo> info = new ArrayList<>();
+				while(rs.next()) {
+					LocationInfo newLocation = new LocationInfo();
+					newLocation.setId(Integer.parseInt(rs.getString("Location_Id")));
+					newLocation.setName(rs.getString("Location_Name"));
+					newLocation.setDescription(rs.getString("Location_Description"));
+					info.add(newLocation);
+				}
+				return info;
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_LOCATIONS_SQL, rowMapper);
 	}
 	
 	/**

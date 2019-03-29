@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import com.uno.zoo.dto.AnimalInfo;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
+import com.uno.zoo.dto.LocationInfo;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
@@ -144,6 +146,16 @@ public class EnrichmentController {
 	@GetMapping(path = "userList", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserListInfo> getUserList() {
 		return service.getUsers();
+	}
+	
+	@GetMapping(path = "animals", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<AnimalInfo> getAnimals() {
+		return service.getAnimals();
+	}
+	
+	@GetMapping(path = "locations", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<LocationInfo> getLocations() {
+		return service.getLocations();
 	}
 
 	private boolean usernameValid(String username) {

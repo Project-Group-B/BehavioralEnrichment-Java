@@ -18,7 +18,7 @@ public class CompleteRequestForm {
 	private String enrichmentDayNightTime;
 	private String enrichmentDescription;
 	private String enrichmentFrequency;
-	private String enrichmentPresentation;
+	private String enrichmentPresentationMethod;
 	private boolean anotherDeptZoo;
 	private boolean anotherDeptZooMoreInfo;
 	private boolean lifeStrategiesWksht;
@@ -96,10 +96,10 @@ public class CompleteRequestForm {
 		this.enrichmentFrequency = enrichmentFrequency;
 	}
 	public String getEnrichmentPresentation() {
-		return enrichmentPresentation;
+		return enrichmentPresentationMethod;
 	}
 	public void setEnrichmentPresentation(String enrichmentPresentation) {
-		this.enrichmentPresentation = enrichmentPresentation;
+		this.enrichmentPresentationMethod = enrichmentPresentation;
 	}
 	public boolean isAnotherDeptZoo() {
 		return anotherDeptZoo;

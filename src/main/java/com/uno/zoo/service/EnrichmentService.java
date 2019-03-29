@@ -8,12 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.uno.zoo.dao.DAO;
+import com.uno.zoo.dto.AnimalInfo;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
+import com.uno.zoo.dto.LocationInfo;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
@@ -259,5 +261,31 @@ public class EnrichmentService {
 		}
 		
 		return users;
+	}
+
+	public List<AnimalInfo> getAnimals() {
+		List<AnimalInfo> animals = new ArrayList<>();
+		
+		try {
+			animals = dao.getAnimals();
+		} catch(Exception e) {
+			LOGGER.error("Error getting animals:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return animals;
+	}
+
+	public List<LocationInfo> getLocations() {
+		List<LocationInfo> locations = new ArrayList<>();
+		
+		try {
+			locations = dao.getLocations();
+		} catch(Exception e) {
+			LOGGER.error("Error getting locations:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return locations;
 	}
 }
