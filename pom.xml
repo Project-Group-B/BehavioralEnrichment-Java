@@ -11,7 +11,7 @@
 	<groupId>com.uno</groupId>
 	<artifactId>BehaviorEnrichment-Java</artifactId>
 	<version>0.0.1</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>BehaviorEnrichment-Java</name>
 	<description>Capstone project for group &quot;Project Group B&quot;; UNO Spring 2019.</description>
 
@@ -83,6 +83,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+					<configuration>
+        				<executable>true</executable>
+    				</configuration>
 			</plugin>
 		</plugins>
 	</build>
