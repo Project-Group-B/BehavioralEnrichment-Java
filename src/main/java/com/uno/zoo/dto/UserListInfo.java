@@ -6,6 +6,7 @@ public class UserListInfo {
 	private String firstName;
 	private String lastName;
 	private String department;
+	private String userStatus;
 	
 	public String getUserId() {
 		return userId;
@@ -36,5 +37,11 @@ public class UserListInfo {
 	}
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+	public String getUserStatus() {
+		return userStatus;
+	}
+	public void setUserStatus(String userStatus) {
+		this.userStatus = userStatus;
 	}
 }

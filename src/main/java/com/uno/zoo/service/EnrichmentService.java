@@ -1,13 +1,18 @@
 package com.uno.zoo.service;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.uno.zoo.dao.DAO;
+import com.uno.zoo.dto.AnimalForm;
 import com.uno.zoo.dto.AnimalInfo;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
@@ -26,6 +31,7 @@ import com.uno.zoo.dto.UserSignUp;
 @Service
 public class EnrichmentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnrichmentService.class);
+	private static final String FILESYSTEM_UPLOAD_FOLDER = "D:\\UNO\\Spring 2019\\Capstone\\Project\\Homepage_Image";
 	private DAO dao;
 	
 	public EnrichmentService(DAO dao) {
@@ -88,10 +94,11 @@ public class EnrichmentService {
 		
 		try {
 			ret = dao.insertRequestForm(form);
+			LOGGER.info("Enrichment request successfully submitted.");
 		} catch(Exception e) {
 			LOGGER.info("Error inserting enrichment request form into database:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true, e.getMessage());
+			ret.setError(true, "ERROR: Insertion failed - exception generated");
 		}
 		
 		return ret;
@@ -111,16 +118,30 @@ public class EnrichmentService {
 		return ret;
 	}
 	
-	public StandardReturnObject removeUsers(List<UserListInfo> users) {
+	public StandardReturnObject submitNewAnimal(AnimalForm form) {
 		StandardReturnObject ret = new StandardReturnObject();
 		
 		try {
-			ret = dao.removeUsers(users);
-			ret.setMessage("Successfully removed user(s)!");
+			ret = dao.insertNewAnimal(form);
 		} catch(Exception e) {
-			LOGGER.info("Error removing users from database:");
+			LOGGER.info("Error inserting new animal into database:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true, "Error removing user(s) - with thrown exception");
+			ret.setError(true, "ERROR: exception when inserting animal");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject deactivateUsers(List<UserListInfo> users) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.deactivateUsers(users);
+			ret.setMessage("Successfully deactivated user(s)!");
+		} catch(Exception e) {
+			LOGGER.info("Error deactivating users in database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "ERROR: exception encountered when deactivating user(s)");
 		}
 		
 		return ret;
@@ -287,5 +308,24 @@ public class EnrichmentService {
 		}
 		
 		return locations;
+	}
+
+	public StandardReturnObject changeHomepageImage(MultipartFile image) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		// Get the file and save it somewhere
+		try {
+			// TODO: save file on filesystem (not working right now)
+	        byte[] bytes = image.getBytes();
+	        Path path = Paths.get(FILESYSTEM_UPLOAD_FOLDER + image.getOriginalFilename());
+	        Files.write(path, bytes);
+	        ret.setMessage("Successfully uploaded image.");
+		} catch (Exception e) {
+			LOGGER.error("Error uploading file:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "ERROR: exception encountered when uploading image");
+		}
+		
+		return ret;
 	}
 }

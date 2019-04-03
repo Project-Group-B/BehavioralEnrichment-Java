@@ -7,18 +7,21 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.uno.zoo.dto.AnimalForm;
 import com.uno.zoo.dto.AnimalInfo;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
+import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
-import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
@@ -34,6 +37,7 @@ public class EnrichmentController {
 	private static String sessionId;
 	private static final String USERNAME_LENGTH_ERROR_MSG = "Username must be between 1 and 25 characters.";
 	private static final String USERNAME_PASSWORD_ERROR = "Username or password invalid.";
+	private static final String EMPTY_FILE_ERROR_MSG = "File empty. Please select an image to upload.";
 	
 	public EnrichmentController(EnrichmentService service) {
 		this.service = service;
@@ -78,8 +82,8 @@ public class EnrichmentController {
 	
 	@PostMapping(path = "removeUsers", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public StandardReturnObject removeUsers(@RequestBody List<UserListInfo> users) {
-		return service.removeUsers(users);
+	public StandardReturnObject deactivateUsers(@RequestBody List<UserListInfo> users) {
+		return service.deactivateUsers(users);
 	}
 	
 	@PostMapping(path = "resetUserPasswords", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -111,6 +115,12 @@ public class EnrichmentController {
 		return service.submitNewItem(form);
 	}
 	
+	@PostMapping(path = "newAnimal", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject submitNewAnimal(@RequestBody AnimalForm form) {
+		return service.submitNewAnimal(form);
+	}
+	
 	@PostMapping(path = "newDept", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public StandardReturnObject addNewDepartment(@RequestBody DepartmentInfo deptName) {
@@ -121,6 +131,18 @@ public class EnrichmentController {
 	@ResponseBody
 	public StandardReturnObject removeDepartment(@RequestBody DepartmentInfo deptId) {
 		return service.removeDepartment(deptId.getDepartmentId());
+	}
+	
+	@PostMapping(path = "homepageImage", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject changeHomepageImage(@RequestParam("file") MultipartFile file) {
+		if(file.isEmpty()) {
+			StandardReturnObject retObject = new StandardReturnObject();
+			retObject.setError(true, EMPTY_FILE_ERROR_MSG);
+			return retObject;
+		} else {
+			return service.changeHomepageImage(file);
+		}
 	}
 	
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)
