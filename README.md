@@ -37,3 +37,8 @@
     1. "Profiles" should be empty
 5. You should see some output in the console ending with something like "Started BehaviorEnrichmentJavaApplication in..."
 6. Application is now listening on port http://localhost:8080
+
+## Deploying Permanently
+1. Install tomcat 9 (https://linuxize.com/post/how-to-install-tomcat-9-on-ubuntu-18-04/)
+2. After a normal build in Maven, export as a .war.
+2. Place .war file in tomcat's deployment directory. No further configuration necessary.
