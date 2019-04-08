@@ -8,6 +8,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +36,10 @@ import com.uno.zoo.dto.UserSignUp;
 @Service
 public class EnrichmentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnrichmentService.class);
-	private static final String FILESYSTEM_UPLOAD_FOLDER = "D:\\UNO\\Spring 2019\\Capstone\\Project\\Homepage_Image";
+	/* //UNO//Spring 2019//Capstone//Project//Homepage_Image// */
+	private static final String HOMEPAGE_IMAGE_FOLDER_FIRST_PART = "D:";
+	private static final String HOMEPAGE_IMAGE_FOLDER_SECOND_PART = "Homepage_Image";
+	private static final String HOMEPAGE_IMAGE_FILE_NAME = "homepage_image";
 	private DAO dao;
 	
 	public EnrichmentService(DAO dao) {
@@ -315,9 +323,8 @@ public class EnrichmentService {
 		
 		// Get the file and save it somewhere
 		try {
-			// TODO: save file on filesystem (not working right now)
 	        byte[] bytes = image.getBytes();
-	        Path path = Paths.get(FILESYSTEM_UPLOAD_FOLDER + image.getOriginalFilename());
+	        Path path = Paths.get(HOMEPAGE_IMAGE_FOLDER_FIRST_PART + HOMEPAGE_IMAGE_FILE_NAME);
 	        Files.write(path, bytes);
 	        ret.setMessage("Successfully uploaded image.");
 		} catch (Exception e) {
@@ -327,5 +334,29 @@ public class EnrichmentService {
 		}
 		
 		return ret;
+	}
+
+	public ResponseEntity<Resource> getHomepageImage() {
+		Path filePath = Paths.get(
+				HOMEPAGE_IMAGE_FOLDER_FIRST_PART,
+				HOMEPAGE_IMAGE_FOLDER_SECOND_PART,
+				HOMEPAGE_IMAGE_FILE_NAME);
+		Resource resource = null;
+        try {
+			resource = new UrlResource(filePath.toUri());
+		} catch (Exception e) {
+			LOGGER.error("Error getting homepage image from file system:");
+			LOGGER.error(e.getMessage(), e);
+		}
+        if(resource != null && resource.exists()) {
+        	return ResponseEntity.ok()
+        			.contentType(MediaType.IMAGE_JPEG)
+        			.contentType(MediaType.IMAGE_PNG)
+        			.contentType(MediaType.IMAGE_GIF)
+        			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+        			.body(resource);
+        } else {
+        	return null;
+        }
 	}
 }

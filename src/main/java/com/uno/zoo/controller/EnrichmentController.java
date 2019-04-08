@@ -2,7 +2,12 @@ package com.uno.zoo.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +42,8 @@ public class EnrichmentController {
 	private static String sessionId;
 	private static final String USERNAME_LENGTH_ERROR_MSG = "Username must be between 1 and 25 characters.";
 	private static final String USERNAME_PASSWORD_ERROR = "Username or password invalid.";
-	private static final String EMPTY_FILE_ERROR_MSG = "File empty. Please select an image to upload.";
+	private static final String EMPTY_FILE_ERROR_MSG = "ERROR: File empty. Please select an image to upload.";
+	private static final String NOT_AN_IMAGE_ERROR_MSG = "ERROR: File must be an image.";
 	
 	public EnrichmentController(EnrichmentService service) {
 		this.service = service;
@@ -136,13 +142,24 @@ public class EnrichmentController {
 	@PostMapping(path = "homepageImage", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public StandardReturnObject changeHomepageImage(@RequestParam("file") MultipartFile file) {
+		StandardReturnObject retObject = new StandardReturnObject();
 		if(file.isEmpty()) {
-			StandardReturnObject retObject = new StandardReturnObject();
 			retObject.setError(true, EMPTY_FILE_ERROR_MSG);
 			return retObject;
 		} else {
-			return service.changeHomepageImage(file);
+			if(file.getContentType().startsWith("image")) {
+				return service.changeHomepageImage(file);
+			} else {
+				retObject.setError(true, NOT_AN_IMAGE_ERROR_MSG);
+				return retObject;
+			}
 		}
+	}
+	
+	@GetMapping(path = "getHomepageImage", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
+	@ResponseBody
+	public ResponseEntity<Resource> getHomepageImage(HttpServletResponse response) {
+		return service.getHomepageImage();
 	}
 	
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)
