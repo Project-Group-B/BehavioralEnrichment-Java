@@ -1,6 +1,5 @@
 package com.uno.zoo.service;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -10,9 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,7 +35,7 @@ public class EnrichmentService {
 	/* //UNO//Spring 2019//Capstone//Project//Homepage_Image// */
 	private static final String HOMEPAGE_IMAGE_FOLDER_FIRST_PART = "D:";
 	private static final String HOMEPAGE_IMAGE_FOLDER_SECOND_PART = "Homepage_Image";
-	private static final String HOMEPAGE_IMAGE_FILE_NAME = "homepage_image";
+	private static final String HOMEPAGE_IMAGE_FILE_NAME = "homepage_image.jpg";
 	private DAO dao;
 	
 	public EnrichmentService(DAO dao) {
@@ -323,9 +319,7 @@ public class EnrichmentService {
 		
 		// Get the file and save it somewhere
 		try {
-	        byte[] bytes = image.getBytes();
-	        Path path = Paths.get(HOMEPAGE_IMAGE_FOLDER_FIRST_PART + HOMEPAGE_IMAGE_FILE_NAME);
-	        Files.write(path, bytes);
+	        dao.saveFileToFileSystem(HOMEPAGE_IMAGE_FOLDER_FIRST_PART, HOMEPAGE_IMAGE_FILE_NAME, image);
 	        ret.setMessage("Successfully uploaded image.");
 		} catch (Exception e) {
 			LOGGER.error("Error uploading file:");
@@ -336,10 +330,9 @@ public class EnrichmentService {
 		return ret;
 	}
 
-	public ResponseEntity<Resource> getHomepageImage() {
+	public Resource getHomepageImage() {
 		Path filePath = Paths.get(
 				HOMEPAGE_IMAGE_FOLDER_FIRST_PART,
-				HOMEPAGE_IMAGE_FOLDER_SECOND_PART,
 				HOMEPAGE_IMAGE_FILE_NAME);
 		Resource resource = null;
         try {
@@ -348,15 +341,6 @@ public class EnrichmentService {
 			LOGGER.error("Error getting homepage image from file system:");
 			LOGGER.error(e.getMessage(), e);
 		}
-        if(resource != null && resource.exists()) {
-        	return ResponseEntity.ok()
-        			.contentType(MediaType.IMAGE_JPEG)
-        			.contentType(MediaType.IMAGE_PNG)
-        			.contentType(MediaType.IMAGE_GIF)
-        			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-        			.body(resource);
-        } else {
-        	return null;
-        }
+        return resource;
 	}
 }
