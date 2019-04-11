@@ -39,6 +39,8 @@
 6. Application is now listening on port http://localhost:8080
 
 ## Deploying Permanently
-1. Install tomcat 9 (https://linuxize.com/post/how-to-install-tomcat-9-on-ubuntu-18-04/)
-2. After a normal build in Maven, export as a .war.
-2. Place .war file in tomcat's deployment directory. No further configuration necessary.
+1. Right click on project in Eclipse
+2. Click "Run As" -> "Maven build..."
+3. Set Goals as "-Dmaven.test.skip=true package"
+4. Upload resulting .jar to deployment location.
+5. Run .jar using "java -jar JAR_NAME"
