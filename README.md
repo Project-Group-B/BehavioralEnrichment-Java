@@ -44,3 +44,4 @@
 3. Set Goals as "-Dmaven.test.skip=true package"
 4. Upload resulting .jar to deployment location.
 5. Run .jar using "java -jar JAR_NAME"
+6. Use "lsof -i :8080" to determine the PID of the process for future reference.
