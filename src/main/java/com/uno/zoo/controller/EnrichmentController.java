@@ -1,13 +1,14 @@
 package com.uno.zoo.controller;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
+import com.uno.zoo.dto.EditUserInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
@@ -38,6 +40,7 @@ import com.uno.zoo.service.EnrichmentService;
 @RestController
 @CrossOrigin
 public class EnrichmentController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(EnrichmentController.class);
 	private EnrichmentService service;
 	private static String sessionId;
 	private static final String USERNAME_LENGTH_ERROR_MSG = "Username must be between 1 and 25 characters.";
@@ -90,6 +93,18 @@ public class EnrichmentController {
 	@ResponseBody
 	public StandardReturnObject deactivateUsers(@RequestBody List<UserListInfo> users) {
 		return service.deactivateUsers(users);
+	}
+	
+	@PostMapping(path = "reactivateUsers", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject reactivateUsers(@RequestBody List<UserListInfo> users) {
+		return service.reactivateUsers(users);
+	}
+	
+	@PostMapping(path = "editUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject editUser(@RequestBody EditUserInfo user) {
+		return service.editUser(user);
 	}
 	
 	@PostMapping(path = "resetUserPasswords", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -157,9 +172,15 @@ public class EnrichmentController {
 	}
 	
 	@GetMapping(path = "getHomepageImage", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
-	@ResponseBody
-	public ResponseEntity<Resource> getHomepageImage(HttpServletResponse response) {
-		return service.getHomepageImage();
+	public void getHomepageImage(HttpServletResponse response) {
+		try {
+			InputStream in = service.getHomepageImage().getInputStream();
+			response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+			IOUtils.copy(in, response.getOutputStream());
+		} catch (Exception e) {
+			LOGGER.error("Error returning homepage image:");
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 	
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)
