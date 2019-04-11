@@ -167,8 +167,19 @@ public class EnrichmentService {
 	}
 	
 	public StandardReturnObject editUser(EditUserInfo user) {
-		// TODO Auto-generated method stub
-		return null;
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.editUser(user);
+			ret.setMessage("Successfully updated user info!");
+			LOGGER.info("Successfully updated user with id '{}'", user.getUserId());
+		} catch(Exception e) {
+			LOGGER.info("Error updating user in database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "ERROR: exception encountered when updating user info");
+		}
+		
+		return ret;
 	}
 	
 	public StandardReturnObject resetPasswords(List<UserListInfo> users) {

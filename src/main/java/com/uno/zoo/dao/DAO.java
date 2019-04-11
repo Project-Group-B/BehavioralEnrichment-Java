@@ -28,6 +28,7 @@ import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
+import com.uno.zoo.dto.EditUserInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
@@ -70,6 +71,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String INSERT_NEW_ANIMAL_SQL = "INSERT INTO animal (Animal_IsisNumber, Animal_Species, Animal_Location, Animal_Housing, Animal_ActivityCycle, Animal_Age) VALUES (:isis, :species, :location, :housing, :activityCycle, :age)";
 	private static final String DEACTIVATE_USER_SQL = "UPDATE user SET User_Status = 2 WHERE User_Id = :userId AND User_Name = :username";
 	private static final String REACTIVATE_USER_SQL = "UPDATE user SET User_Status = 0 WHERE User_Id = :userId AND User_Name = :username";
+	private static final String EDIT_USER_SQL = "UPDATE user SET User_Name = :new_username, User_FirstName = :new_firstname, User_LastName = :new_lastname, User_Department = :new_departmentid WHERE User_Id = :userId";
 	private static final String RESET_USER_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:defaultPassword, 256) WHERE User_Id :id";
 	private static final String CHANGE_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:newPassword, 256) WHERE User_Id = :id AND User_Name = :username AND User_Pass = sha2(:oldPassword, 256)";
 	private static final String ADD_NEW_DEPARTMENT_SQL = "INSERT INTO department (Department_Name) VALUES (:deptName)";
@@ -285,6 +287,22 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			if(i == 0) {
 				throw new Exception("Number rows affected when reactivating users was less than 1");
 			}
+		}
+		return retObject;
+	}
+	
+	public StandardReturnObject editUser(EditUserInfo user) throws Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("new_username", user.getUsername());
+		params.addValue("new_firstname", user.getFirstName());
+		params.addValue("new_lastname", user.getLastName());
+		params.addValue("new_departmentid", user.getDepartment().getDepartmentId());
+		params.addValue("userId", user.getUserId());
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(EDIT_USER_SQL, params);
+		if(rowsAffected <= 0) {
+			throw new Exception("Number rows affected when updating user info was less than 1.");
 		}
 		return retObject;
 	}

@@ -29,3 +29,4 @@ spring.log.*
 *.log
 *.log
 logs/spring.log
+logs/spring.log
