@@ -19,6 +19,7 @@ import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
+import com.uno.zoo.dto.EditUserInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
@@ -34,7 +35,6 @@ public class EnrichmentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnrichmentService.class);
 	/* //UNO//Spring 2019//Capstone//Project//Homepage_Image// */
 	private static final String HOMEPAGE_IMAGE_FOLDER_FIRST_PART = "D:";
-	private static final String HOMEPAGE_IMAGE_FOLDER_SECOND_PART = "Homepage_Image";
 	private static final String HOMEPAGE_IMAGE_FILE_NAME = "homepage_image.jpg";
 	private DAO dao;
 	
@@ -149,6 +149,26 @@ public class EnrichmentService {
 		}
 		
 		return ret;
+	}
+	
+	public StandardReturnObject reactivateUsers(List<UserListInfo> users) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.reactivateUsers(users);
+			ret.setMessage("Successfully reactivated user(s)!");
+		} catch(Exception e) {
+			LOGGER.info("Error reactivating users in database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "ERROR: exception encountered when reactivating user(s)");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject editUser(EditUserInfo user) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	public StandardReturnObject resetPasswords(List<UserListInfo> users) {

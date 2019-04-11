@@ -48,7 +48,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String GET_CATEGORIES_SQL = "SELECT Category_Id, Category_Name, Category_Description FROM category ORDER BY Category_Name asc";
 	private static final String GET_SPECIES_SQL = "SELECT Species_Id, Species_Name, Species_Description FROM species ORDER BY Species_Name ASC";
 	private static final String GET_ITEMS_SQL = "SELECT Item_Id, Item_Name FROM item ORDER BY Item_Name ASC";
-	private static final String GET_USERS_SQL = "SELECT a.User_Id, a.User_Name, a.User_FirstName, a.User_LastName, a.User_Status, b.Department_Name FROM user AS a INNER JOIN department AS b ON a.User_Department=b.Department_Id WHERE a.User_Status != 2 ORDER BY User_Id ASC";
+	private static final String GET_USERS_SQL = "SELECT a.User_Id, a.User_Name, a.User_FirstName, a.User_LastName, a.User_Status, b.Department_Name FROM user AS a INNER JOIN department AS b ON a.User_Department=b.Department_Id ORDER BY User_Id ASC";
 	private static final String GET_ANIMALS_SQL = "SELECT animal.Animal_Id, animal.Animal_IsisNumber, species.Species_Name FROM animal INNER JOIN species ON animal.Animal_Species=species.Species_Id ORDER BY Animal_Id";
 	private static final String GET_LOCATIONS_SQL = "SELECT Location_Id, Location_Name, Location_Description FROM location ORDER BY Location_Name ASC";
 	private static final String ENRICHMENT_REQUEST_FORM_SQL = "INSERT INTO enrichment_experience "
@@ -69,6 +69,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_Photo, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
 	private static final String INSERT_NEW_ANIMAL_SQL = "INSERT INTO animal (Animal_IsisNumber, Animal_Species, Animal_Location, Animal_Housing, Animal_ActivityCycle, Animal_Age) VALUES (:isis, :species, :location, :housing, :activityCycle, :age)";
 	private static final String DEACTIVATE_USER_SQL = "UPDATE user SET User_Status = 2 WHERE User_Id = :userId AND User_Name = :username";
+	private static final String REACTIVATE_USER_SQL = "UPDATE user SET User_Status = 0 WHERE User_Id = :userId AND User_Name = :username";
 	private static final String RESET_USER_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:defaultPassword, 256) WHERE User_Id :id";
 	private static final String CHANGE_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:newPassword, 256) WHERE User_Id = :id AND User_Name = :username AND User_Pass = sha2(:oldPassword, 256)";
 	private static final String ADD_NEW_DEPARTMENT_SQL = "INSERT INTO department (Department_Name) VALUES (:deptName)";
@@ -269,6 +270,20 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		for(int i : rowsAffected) {
 			if(i == 0) {
 				throw new Exception("Number rows affected when removing users was less than 1");
+			}
+		}
+		return retObject;
+	}
+	
+	public StandardReturnObject reactivateUsers(List<UserListInfo> users) throws Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		
+		SqlParameterSource[] batchArgs = SqlParameterSourceUtils.createBatch(users.toArray());
+		int[] rowsAffected = getNamedParameterJdbcTemplate().batchUpdate(REACTIVATE_USER_SQL, batchArgs);
+		
+		for(int i : rowsAffected) {
+			if(i == 0) {
+				throw new Exception("Number rows affected when reactivating users was less than 1");
 			}
 		}
 		return retObject;

@@ -25,6 +25,7 @@ import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
+import com.uno.zoo.dto.EditUserInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
@@ -92,6 +93,18 @@ public class EnrichmentController {
 	@ResponseBody
 	public StandardReturnObject deactivateUsers(@RequestBody List<UserListInfo> users) {
 		return service.deactivateUsers(users);
+	}
+	
+	@PostMapping(path = "reactivateUsers", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject reactivateUsers(@RequestBody List<UserListInfo> users) {
+		return service.reactivateUsers(users);
+	}
+	
+	@PostMapping(path = "editUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject editUser(@RequestBody EditUserInfo user) {
+		return service.editUser(user);
 	}
 	
 	@PostMapping(path = "resetUserPasswords", produces = MediaType.APPLICATION_JSON_VALUE)
