@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -76,6 +77,8 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String CHANGE_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:newPassword, 256) WHERE User_Id = :id AND User_Name = :username AND User_Pass = sha2(:oldPassword, 256)";
 	private static final String ADD_NEW_DEPARTMENT_SQL = "INSERT INTO department (Department_Name) VALUES (:deptName)";
 	private static final String REMOVE_DEPARTMENT_BY_ID_SQL = "DELETE FROM department WHERE Department_Id = :id";
+	
+	public static final String DEFAULT_PHOTO_LOCATION = "D:/Zoo_Item_Photos";
 	
 	public DAO(DataSource dataSource) {
 		super.setDataSource(dataSource);
@@ -221,19 +224,17 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	 * @return {@link StandardReturnObject}
 	 */
 	public StandardReturnObject insertNewItem(ItemForm form) throws DataAccessException, Exception {
-		// TODO: submit image options:
-	    // https://stackoverflow.com/questions/1665730/images-in-mysql
-	    // https://stackoverflow.com/questions/3014578/storing-images-in-mysql
-	    // https://stackoverflow.com/questions/6472233/can-i-store-images-in-mysql
-	    // https://www.quora.com/What-is-the-best-way-to-store-100-images-in-a-MySQL-database-in-this-case
 		StandardReturnObject retObject = new StandardReturnObject();
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("name", form.getItemName());
-		params.addValue("photo", form.getPhoto());
 		params.addValue("approval", 2);
 		params.addValue("comments", form.getComments());
 		params.addValue("safetyNotes", form.getSafetyNotes());
 		params.addValue("exceptions", form.getExceptions());
+		
+		String photoFileName = form.getItemName().replaceAll(" ", "_").toLowerCase() + "_submitted_by_user_" + form.getSubmittor();
+		saveToFileSystem(DEFAULT_PHOTO_LOCATION, photoFileName, Base64.getDecoder().decode(form.getBase64EncodedPhoto().split(",")[1].getBytes()));
+		params.addValue("photo", DEFAULT_PHOTO_LOCATION + "/" + photoFileName);
 		
 		int rowsAffected = getNamedParameterJdbcTemplate().update(INSERT_NEW_ITEM_SQL, params);
 		if(rowsAffected <= 0) {
@@ -532,8 +533,20 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	public void saveFileToFileSystem(String filesystemPath, String fileName, MultipartFile fileToSave) throws IOException {
 		byte[] bytes = fileToSave.getBytes();
 		String extension = FilenameUtils.getExtension(fileToSave.getOriginalFilename());
-        Path path = Paths.get(filesystemPath + fileName + "." + extension);
-        Files.write(path, bytes);
+		Path path = Paths.get(filesystemPath + fileName + "." + extension);
+		Files.write(path, bytes);
+	}
+	
+	/**
+	 * Saves the Base64 decoded image to the file system.
+	 * @param filesystemPath
+	 * @param fileName
+	 * @param decodedImage
+	 * @throws IOException
+	 */
+	public void saveToFileSystem(String filesystemPath, String fileName, byte[] decodedImage) throws IOException {
+		Path path = Paths.get(filesystemPath + fileName + ".jpg");
+		Files.write(path, decodedImage);
 	}
 	
 	/**
