@@ -1,13 +1,24 @@
 package com.uno.zoo.dao;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -16,12 +27,16 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
 
+import com.uno.zoo.dto.AnimalForm;
+import com.uno.zoo.dto.AnimalInfo;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
+import com.uno.zoo.dto.EditUserInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
+import com.uno.zoo.dto.LocationInfo;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
@@ -31,30 +46,45 @@ import com.uno.zoo.dto.UserSignUp;
 
 @Component
 public class DAO extends NamedParameterJdbcDaoSupport {
-	private static final String LOGIN_USER_SQL = "SELECT a.User_Id, a.User_Name, a.User_Status, a.User_FirstName, a.User_LastName, b.Department_Name from user as a INNER JOIN department as b ON a.User_Department=b.Department_Id WHERE User_Name = :username AND User_Pass = sha2(:password, 256)";
+	private static final Logger LOGGER = LoggerFactory.getLogger(DAO.class);
+	
+	private static final String LOGIN_USER_SQL = "SELECT a.User_Id, a.User_Name, a.User_Status, a.User_FirstName, a.User_LastName, b.Department_Name from user as a INNER JOIN department as b ON a.User_Department=b.Department_Id WHERE User_Name = :username AND User_Pass = sha2(:password, 256) AND User_Status != 2";
 	private static final String USERNAME_EXISTS_SQL = "SELECT EXISTS (SELECT 1 FROM user WHERE User_Name = :username) AS doesExist";
+	private static final String CHECK_IS_ADMIN_SQL = "SELECT User_Status from user WHERE User_Name = :username";
 	private static final String ADD_USER_SQL = "INSERT INTO user (User_Name, User_Pass, User_Status, User_Department, User_FirstName, User_LastName) VALUES (:username, sha2(:password, 256), :status, :department, :firstName, :lastName)";
 	private static final String GET_DEPARTMENTS_SQL = "SELECT Department_Id, Department_Name FROM department ORDER BY Department_Name asc";
 	private static final String GET_CATEGORIES_SQL = "SELECT Category_Id, Category_Name, Category_Description FROM category ORDER BY Category_Name asc";
-	private static final String GET_SPECIES_SQL = "SELECT Species_Id, Species_Name, Species_Description, Species_IsisNumber FROM species ORDER BY Species_Name ASC";
+	private static final String GET_SPECIES_SQL = "SELECT Species_Id, Species_Name, Species_Description FROM species ORDER BY Species_Name ASC";
 	private static final String GET_ITEMS_SQL = "SELECT Item_Id, Item_Name FROM item ORDER BY Item_Name ASC";
-	private static final String GET_USERS_SQL = "SELECT a.User_Id, a.User_Name, a.User_FirstName, a.User_LastName, b.Department_Name from user as a INNER JOIN department as b ON a.User_Department=b.Department_Id ORDER BY User_Id ASC";
+	private static final String GET_USERS_SQL = "SELECT a.User_Id, a.User_Name, a.User_FirstName, a.User_LastName, a.User_Status, b.Department_Name FROM user AS a INNER JOIN department AS b ON a.User_Department=b.Department_Id ORDER BY User_Id ASC";
+	private static final String GET_ANIMALS_SQL = "SELECT animal.Animal_Id, animal.Animal_IsisNumber, species.Species_Name FROM animal INNER JOIN species ON animal.Animal_Species=species.Species_Id ORDER BY Animal_Id";
+	private static final String GET_LOCATIONS_SQL = "SELECT Location_Id, Location_Name, Location_Description FROM location ORDER BY Location_Name ASC";
 	private static final String ENRICHMENT_REQUEST_FORM_SQL = "INSERT INTO enrichment_experience "
-			+ "(Enrichment_Department, Enrichment_species, Enrichment_Name, Enrichment_Description, "
-			+ "Enrichment_PresentationMethod, Enrichment_TimeStart, Enrichment_Frequency, "
-			+ "Enrichment_LifeStrategies, Enrichment_PreviousUse, Enrichment_SafetyQuestions, "
-			+ "Enrichment_RisksHazards, Enrichment_Concerns, Enrichment_ExpectedBehavior, "
+			+ "(Enrichment_DateSubmitted, Enrichment_Name, Enrichment_Submittor, Enrichment_Department, "
+			+ "Enrichment_Item, Enrichment_Species, Enrichment_Animal, Enrichment_Description, "
+			+ "Enrichment_Location, Enrichment_PresentationMethod, Enrichment_TimeStart, Enrichment_TimeEnd, "
+			+ "Enrichment_Frequency, Enrichment_LifeStrategies, Enrichment_PreviousUse, "
+			+ "Enrichment_Contact, Enrichment_SafetyQuestions, Enrichment_RisksHazards, Enrichment_Goal, "
 			+ "Enrichment_Source, Enrichment_TimeRequired, Enrichment_Construction, Enrichment_Volunteers, "
-			+ "Enrichment_Submittor, Enrichment_DateSubmitted) values "
-			+ "(:dept, :species, :name, :description, :presentationMethod, :timeStart, :frequency, "
-			+ ":lifeStrategies, :previousUse, :safetyQuestions, :risksHazards, :concerns, :expectedBehavior,"
-			+ ":source, :timeRequired, :construction, :volunteers, :submitter, :dateSubmitted)";
-	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_Photo, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
-	private static final String REMOVE_USER_SQL = "DELETE FROM user WHERE User_Id = :userId AND User_Name = :username";
+			+ "Enrichment_Inventory, Enrichment_Concerns, Enrichment_ApprovedBy, Enrichment_IsApproved) values "
+			+ "(:dateSubmitted, :name, :submitter, :department, "
+			+ ":item, :species, :animal, :description, "
+			+ ":location, :presentationMethod, :timeStart, :timeEnd, "
+			+ ":frequency, :lifeStrategies, :previousUse, "
+			+ ":contact, :safetyQuestions, :risksHazards, :goal, "
+			+ ":source, :timeRequired, :construction, :volunteers, "
+			+ ":inventory, :concerns, :approvedBy, :isApproved)";
+	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_PathToPhoto, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
+	private static final String INSERT_NEW_ANIMAL_SQL = "INSERT INTO animal (Animal_IsisNumber, Animal_Species, Animal_Location, Animal_Housing, Animal_ActivityCycle, Animal_Age) VALUES (:isis, :species, :location, :housing, :activityCycle, :age)";
+	private static final String DEACTIVATE_USER_SQL = "UPDATE user SET User_Status = 2 WHERE User_Id = :userId AND User_Name = :username";
+	private static final String REACTIVATE_USER_SQL = "UPDATE user SET User_Status = 0 WHERE User_Id = :userId AND User_Name = :username";
+	private static final String EDIT_USER_SQL = "UPDATE user SET User_Name = :new_username, User_FirstName = :new_firstname, User_LastName = :new_lastname, User_Department = :new_departmentid WHERE User_Id = :userId";
 	private static final String RESET_USER_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:defaultPassword, 256) WHERE User_Id :id";
 	private static final String CHANGE_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:newPassword, 256) WHERE User_Id = :id AND User_Name = :username AND User_Pass = sha2(:oldPassword, 256)";
 	private static final String ADD_NEW_DEPARTMENT_SQL = "INSERT INTO department (Department_Name) VALUES (:deptName)";
 	private static final String REMOVE_DEPARTMENT_BY_ID_SQL = "DELETE FROM department WHERE Department_Id = :id";
+	
+	public static final String DEFAULT_PHOTO_LOCATION = "D:/Zoo_Item_Photos";
 	
 	public DAO(DataSource dataSource) {
 		super.setDataSource(dataSource);
@@ -62,6 +92,10 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 
 	/**
 	 * Accesses the database and retrieves the user information from valid credentials are provided.
+	 * User_Status column values are defined as follows:<br/>
+	 * <strong>0</strong>: regular user (not admin), active<br/>
+	 * <strong>1</strong>: admin user, active<br/>
+	 * <strong>2</strong>: inactive user (will not appear in user table and user is unable to log in)
 	 * @param user {@link UserLogIn} information
 	 * @return {@link UserInfo} completely filled out if logged in. If not logged in, object parameters will
 	 * be null except {@link UserInfo#setLoggedIn(boolean)} will be false
@@ -135,42 +169,58 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	 * @return {@link StandardReturnObject} with no parameters filled out - calling function responsible for
 	 * that.
 	 * @throws DataAccessException
+	 * @throws SQLException 
 	 */
-	public StandardReturnObject insertRequestForm(CompleteRequestForm form) throws DataAccessException {
+	public StandardReturnObject insertRequestForm(CompleteRequestForm form) throws DataAccessException, SQLException {
+		// TODO: changed db enrichment.Enrichment_Inventory to varchar(75)
+		java.util.Date now = new java.util.Date();
+		java.sql.Date nowSql = new java.sql.Date(now.getTime());
+		
+		boolean userIsAdmin = checkIsAdmin(form.getNameOfSubmitter().getUsername());
+		
 		StandardReturnObject retObject = new StandardReturnObject();
 		MapSqlParameterSource params = new MapSqlParameterSource();
-		// TODO: Enrichment_Item - id from 'item' table
-		// TODO: Enrichment_Animal - id from 'animal' table, can be null
-		// TODO: Enrichment_Location - id from 'location' table
-		// TODO: Enrichment_TimeEnd - datetime
-		// TODO: Enrichment_Goal - varchar(1000)
-		// TODO: Enrichment_Inventory - varchar(10)
-		// TODO: Enrichment_IsApproved - int
-		params.addValue("dept", form.getDepartment().getDepartmentId()); // id from 'department' table
-		params.addValue("species", form.getSpecies().getSpeciesId()); // id from 'species' table
-		params.addValue("name", form.getEnrichmentName()); // have
-		params.addValue("description", form.getEnrichmentDescription()); // have
-		params.addValue("presentationMethod", form.getEnrichmentPresentation()); // have
-		params.addValue("timeStart", form.getTimeRequired()); // TODO: needs to be type datetime
-		params.addValue("frequency", form.getEnrichmentFrequency()); // TODO: needs to be int
-		params.addValue("lifeStrategies", form.isLifeStrategiesWksht()); // TODO: needs to be int
-		params.addValue("previousUse", form.isAnotherDeptZoo()); // TODO: needs to be int
-		params.addValue("safetyQuestions", form.isSafetyQuestion()); // TODO: needs to be int
-		params.addValue("risksHazards", form.isRisksQuestion()); // TODO: needs to be int
-		params.addValue("concerns", form.getSafetyComment()); // have
-		params.addValue("expectedBehavior", form.getNaturalBehaviors()); // have
-		params.addValue("source", form.getSource()); // have
-		params.addValue("timeRequired", form.getTimeRequired()); // TODO: needs to be int
-		params.addValue("construction", form.getWhoConstructs()); // have
-		params.addValue("volunteers", form.isVolunteerDocentUtilized()); // TODO: needs to be int
-		params.addValue("submitter", form.getNameOfSubmitter()); // id from 'user' table
-		params.addValue("dateSubmitted", form.getDateOfSubmission()); // have
+
+		params.addValue("department", form.getDepartment().getDepartmentId());
+		params.addValue("species", form.getSpecies().getSpeciesId());
+		params.addValue("animal", form.getAnimalId());
+
+		params.addValue("item", form.getItemId());
+		params.addValue("name", form.getEnrichmentName());
+		params.addValue("description", form.getEnrichmentDescription());
+		params.addValue("location", form.getEnrichmentLocation());
+		params.addValue("presentationMethod", form.getEnrichmentPresentationMethod());
+		params.addValue("timeStart", nowSql); // TODO: use timepicker
+		params.addValue("timeEnd", nowSql); // TODO: use timepicker
+		params.addValue("frequency", Integer.parseInt(form.getEnrichmentFrequency()));
+
+		params.addValue("lifeStrategies", form.isLifeStrategiesWksht() ? 1 : 0);
+		params.addValue("previousUse", form.isAnotherDeptZoo() ? 1 : 0);
+		params.addValue("contact", form.isAnotherDeptZooMoreInfo());
+		params.addValue("safetyQuestions", form.isSafetyQuestion() ? 1 : 0);
+		params.addValue("risksHazards", form.isRisksQuestion() ? 1 : 0);
+		params.addValue("concerns", form.getSafetyComment());
+
+		params.addValue("goal", form.getNaturalBehaviors());
+
+		params.addValue("source", StringUtils.isBlank(form.getOtherSource()) ? form.getSource() : form.getOtherSource());
+		params.addValue("timeRequired", form.getTimeRequired());
+		params.addValue("construction", form.getWhoConstructs());
+		params.addValue("volunteers", form.isVolunteerDocentUtilized() ? 1 : 0);
+		params.addValue("inventory", form.getEnrichmentCategory());
+		params.addValue("submitter", form.getNameOfSubmitter().getId());
+		params.addValue("dateSubmitted", form.getDateOfSubmission());
+
+		params.addValue("approvedBy", userIsAdmin ? form.getNameOfSubmitter().getId() : 0);
+		params.addValue("isApproved", userIsAdmin ? 1 : 0);
 		
-		// Convert array of categories into a single string
-		@SuppressWarnings("unused")
-		String str = String.join(",", form.getEnrichmentCategory());
+		int rowsAffected = getNamedParameterJdbcTemplate().update(ENRICHMENT_REQUEST_FORM_SQL, params);
 		
-//		getNamedParameterJdbcTemplate().query(ENRICHMENT_REQUEST_FORM_SQL, rowMapper);
+		if(rowsAffected >= 1) {
+			retObject.setMessage("Successfully inserted enrichment request!");
+		} else {
+			retObject.setError(true, "ERROR: 0 rows affected");
+		}
 		return retObject;
 	}
 	
@@ -180,19 +230,19 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	 * @return {@link StandardReturnObject}
 	 */
 	public StandardReturnObject insertNewItem(ItemForm form) throws DataAccessException, Exception {
-		// TODO: submit image options:
-	    // https://stackoverflow.com/questions/1665730/images-in-mysql
-	    // https://stackoverflow.com/questions/3014578/storing-images-in-mysql
-	    // https://stackoverflow.com/questions/6472233/can-i-store-images-in-mysql
-	    // https://www.quora.com/What-is-the-best-way-to-store-100-images-in-a-MySQL-database-in-this-case
 		StandardReturnObject retObject = new StandardReturnObject();
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("name", form.getItemName());
-		params.addValue("photo", form.getPhoto());
 		params.addValue("approval", 2);
 		params.addValue("comments", form.getComments());
 		params.addValue("safetyNotes", form.getSafetyNotes());
 		params.addValue("exceptions", form.getExceptions());
+		
+		String photoFileName = form.getItemName().replaceAll(" ", "_").toLowerCase() + "_submitted_by_user_" + form.getSubmittor() + ".jpg";
+		LOGGER.info("Saving photo with name '{}' to path '{}'...", photoFileName, DEFAULT_PHOTO_LOCATION);
+		saveToFileSystem(DEFAULT_PHOTO_LOCATION, photoFileName, form.getBase64EncodedPhoto());
+		LOGGER.info("successfully saved new item photo.");
+		params.addValue("photo", DEFAULT_PHOTO_LOCATION + "/" + photoFileName);
 		
 		int rowsAffected = getNamedParameterJdbcTemplate().update(INSERT_NEW_ITEM_SQL, params);
 		if(rowsAffected <= 0) {
@@ -203,16 +253,65 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		return retObject;
 	}
 	
-	public StandardReturnObject removeUsers(List<UserListInfo> users) throws DataAccessException, Exception {
+	public StandardReturnObject insertNewAnimal(AnimalForm form) throws Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("isis", form.getIsisNumber());
+		params.addValue("species", form.getSpecies());
+		params.addValue("location", form.getLocation());
+		params.addValue("housing", form.getHoused());
+		params.addValue("activityCycle", form.getActivityCycle());
+		params.addValue("age", form.getAge());
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(INSERT_NEW_ANIMAL_SQL, params);
+		if(rowsAffected <= 0) {
+			throw new Exception("Number rows affected when inserting new animal was less than 1.");
+		}
+		
+		retObject.setMessage(rowsAffected > 0 ? "Animal successfully entered!" : "ERROR: 0 rows affected");
+		return retObject;
+	}
+	
+	public StandardReturnObject deactivateUsers(List<UserListInfo> users) throws DataAccessException, Exception {
 		StandardReturnObject retObject = new StandardReturnObject();
 		
 		SqlParameterSource[] batchArgs = SqlParameterSourceUtils.createBatch(users.toArray());
-		int[] rowsAffected = getNamedParameterJdbcTemplate().batchUpdate(REMOVE_USER_SQL, batchArgs);
+		int[] rowsAffected = getNamedParameterJdbcTemplate().batchUpdate(DEACTIVATE_USER_SQL, batchArgs);
 		
 		for(int i : rowsAffected) {
 			if(i == 0) {
 				throw new Exception("Number rows affected when removing users was less than 1");
 			}
+		}
+		return retObject;
+	}
+	
+	public StandardReturnObject reactivateUsers(List<UserListInfo> users) throws Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		
+		SqlParameterSource[] batchArgs = SqlParameterSourceUtils.createBatch(users.toArray());
+		int[] rowsAffected = getNamedParameterJdbcTemplate().batchUpdate(REACTIVATE_USER_SQL, batchArgs);
+		
+		for(int i : rowsAffected) {
+			if(i == 0) {
+				throw new Exception("Number rows affected when reactivating users was less than 1");
+			}
+		}
+		return retObject;
+	}
+	
+	public StandardReturnObject editUser(EditUserInfo user) throws Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("new_username", user.getUsername());
+		params.addValue("new_firstname", user.getFirstName());
+		params.addValue("new_lastname", user.getLastName());
+		params.addValue("new_departmentid", user.getDepartment().getDepartmentId());
+		params.addValue("userId", user.getUserId());
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(EDIT_USER_SQL, params);
+		if(rowsAffected <= 0) {
+			throw new Exception("Number rows affected when updating user info was less than 1.");
 		}
 		return retObject;
 	}
@@ -340,7 +439,6 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 					newSpecies.setSpeciesId(Integer.parseInt(rs.getString("Species_Id")));
 					newSpecies.setSpeciesName(rs.getString("Species_Name"));
 					newSpecies.setSpeciesDescription(rs.getString("Species_Description"));
-					newSpecies.setSpeciesIsisNumber(Integer.parseInt(rs.getString("Species_IsisNumber")));
 					info.add(newSpecies);
 				}
 				return info;
@@ -385,6 +483,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 					newUser.setFirstName(rs.getString("User_FirstName"));
 					newUser.setLastName(rs.getString("User_LastName"));
 					newUser.setDepartment(rs.getString("Department_Name"));
+					newUser.setUserStatus(rs.getString("User_Status"));
 					info.add(newUser);
 				}
 				return info;
@@ -392,6 +491,99 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		};
 		
 		return getNamedParameterJdbcTemplate().query(GET_USERS_SQL, rowMapper);
+	}
+	
+	public List<AnimalInfo> getAnimals() throws SQLException, DataAccessException, NumberFormatException {
+		ResultSetExtractor<List<AnimalInfo>> rowMapper = new ResultSetExtractor<List<AnimalInfo>>() {
+			@Override public List<AnimalInfo> extractData(ResultSet rs) throws SQLException {
+				List<AnimalInfo> info = new ArrayList<>();
+				while(rs.next()) {
+					AnimalInfo newAnimal = new AnimalInfo();
+					newAnimal.setId(Integer.parseInt(rs.getString("Animal_Id")));
+					newAnimal.setIsisNumber(Integer.parseInt(rs.getString("Animal_IsisNumber")));
+					newAnimal.setSpecies(rs.getString("Species_Name"));
+					info.add(newAnimal);
+				}
+				return info;
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_ANIMALS_SQL, rowMapper);
+	}
+	
+	public List<LocationInfo> getLocations() {
+		ResultSetExtractor<List<LocationInfo>> rowMapper = new ResultSetExtractor<List<LocationInfo>>() {
+			@Override public List<LocationInfo> extractData(ResultSet rs) throws SQLException {
+				List<LocationInfo> info = new ArrayList<>();
+				while(rs.next()) {
+					LocationInfo newLocation = new LocationInfo();
+					newLocation.setId(Integer.parseInt(rs.getString("Location_Id")));
+					newLocation.setName(rs.getString("Location_Name"));
+					newLocation.setDescription(rs.getString("Location_Description"));
+					info.add(newLocation);
+				}
+				return info;
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_LOCATIONS_SQL, rowMapper);
+	}
+	
+	/**
+	 * Saves the Base64 encoded image string to the file system.
+	 * @param filesystemPath
+	 * @param fileName
+	 * @param decodedImage
+	 * @throws IOException
+	 */
+	public void saveToFileSystem(String filesystemPath, String fileName, String base64String) throws IOException {
+		FileOutputStream fos = new FileOutputStream(filesystemPath + "/" + fileName);
+		fos.write(Base64.getDecoder().decode(base64String.split(",")[1]));
+		fos.close();
+	}
+	
+	/**
+	 * Gets the image from the file system as a Base64 encoded string.<br/>
+	 * You will need to add the base64 prefix before it will display: "data:image/jpg;base64," + base64EncodedString
+	 * @param filePath Full path to image, including image name. Use Paths.get(HOMEPAGE_IMAGE_FOLDER_FIRST_PART, HOMEPAGE_IMAGE_FILE_NAME);
+	 * @return Base64 encoded string without the prefix "data:image/jpg;base64,"
+	 * @throws IOException When reading image from file system.
+	 */
+	public String getImageFromFileSystemAsBase64String(Path filePath) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		Encoder base64Encoder = Base64.getEncoder();
+		String base64EncodedImage = "";
+		
+		BufferedImage img = ImageIO.read(new File(filePath.toUri()));
+		
+    	ImageIO.write(img, "jpg", baos);
+    	byte[] imgBytes = baos.toByteArray();
+    	base64EncodedImage = base64Encoder.encodeToString(imgBytes);
+    	
+    	return base64EncodedImage;
+	}
+	
+	/**
+	 * Checks if the given username belongs to an admin user.
+	 * @param userName The string username of the user to check.
+	 * @return {@code true} if the username is an admin's username<br/> {@code false} otherwise
+	 * @throws SQLException
+	 */
+	private boolean checkIsAdmin(String userName) throws SQLException {
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("username", userName);
+		
+		ResultSetExtractor<Boolean> existsRowMapper = new ResultSetExtractor<Boolean>() {
+			@Override public Boolean extractData(ResultSet rs) throws SQLException {
+				if(rs.next()) {
+					return Boolean.valueOf(rs.getBoolean("User_Status"));
+				} else {
+					return Boolean.FALSE;
+				}
+			}
+		};
+		
+		return getNamedParameterJdbcTemplate().query(CHECK_IS_ADMIN_SQL, params, existsRowMapper).booleanValue();
 	}
 	
 	/**

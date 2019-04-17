@@ -1,7 +1,7 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
-logs/
+
 spring.log.*
 
 ### STS ###
@@ -28,3 +28,5 @@ spring.log.*
 /build/
 *.log
 *.log
+logs/spring.log
+logs/spring.log

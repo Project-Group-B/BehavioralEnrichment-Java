@@ -1,5 +1,7 @@
 package com.uno.zoo.service;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,12 +10,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.uno.zoo.dao.DAO;
+import com.uno.zoo.dto.AnimalForm;
+import com.uno.zoo.dto.AnimalInfo;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
+import com.uno.zoo.dto.EditUserInfo;
+import com.uno.zoo.dto.ImageInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
+import com.uno.zoo.dto.LocationInfo;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
 import com.uno.zoo.dto.UserInfo;
@@ -24,6 +31,9 @@ import com.uno.zoo.dto.UserSignUp;
 @Service
 public class EnrichmentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnrichmentService.class);
+	/* //UNO//Spring 2019//Capstone//Project//Homepage_Image// */
+	private static final String HOMEPAGE_IMAGE_FOLDER_FIRST_PART = "D:";
+	private static final String HOMEPAGE_IMAGE_FILE_NAME = "homepage_image.jpg";
 	private DAO dao;
 	
 	public EnrichmentService(DAO dao) {
@@ -86,10 +96,11 @@ public class EnrichmentService {
 		
 		try {
 			ret = dao.insertRequestForm(form);
+			LOGGER.info("Enrichment request successfully submitted.");
 		} catch(Exception e) {
 			LOGGER.info("Error inserting enrichment request form into database:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true, e.getMessage());
+			ret.setError(true, "ERROR: Insertion failed - exception generated");
 		}
 		
 		return ret;
@@ -109,16 +120,61 @@ public class EnrichmentService {
 		return ret;
 	}
 	
-	public StandardReturnObject removeUsers(List<UserListInfo> users) {
+	public StandardReturnObject submitNewAnimal(AnimalForm form) {
 		StandardReturnObject ret = new StandardReturnObject();
 		
 		try {
-			ret = dao.removeUsers(users);
-			ret.setMessage("Successfully removed user(s)!");
+			ret = dao.insertNewAnimal(form);
 		} catch(Exception e) {
-			LOGGER.info("Error removing users from database:");
+			LOGGER.info("Error inserting new animal into database:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true, "Error removing user(s) - with thrown exception");
+			ret.setError(true, "ERROR: exception when inserting animal");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject deactivateUsers(List<UserListInfo> users) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.deactivateUsers(users);
+			ret.setMessage("Successfully deactivated user(s)!");
+		} catch(Exception e) {
+			LOGGER.info("Error deactivating users in database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "ERROR: exception encountered when deactivating user(s)");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject reactivateUsers(List<UserListInfo> users) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.reactivateUsers(users);
+			ret.setMessage("Successfully reactivated user(s)!");
+		} catch(Exception e) {
+			LOGGER.info("Error reactivating users in database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "ERROR: exception encountered when reactivating user(s)");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject editUser(EditUserInfo user) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.editUser(user);
+			ret.setMessage("Successfully updated user info!");
+			LOGGER.info("Successfully updated user with id '{}'", user.getUserId());
+		} catch(Exception e) {
+			LOGGER.info("Error updating user in database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "ERROR: exception encountered when updating user info");
 		}
 		
 		return ret;
@@ -259,5 +315,60 @@ public class EnrichmentService {
 		}
 		
 		return users;
+	}
+
+	public List<AnimalInfo> getAnimals() {
+		List<AnimalInfo> animals = new ArrayList<>();
+		
+		try {
+			animals = dao.getAnimals();
+		} catch(Exception e) {
+			LOGGER.error("Error getting animals:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return animals;
+	}
+
+	public List<LocationInfo> getLocations() {
+		List<LocationInfo> locations = new ArrayList<>();
+		
+		try {
+			locations = dao.getLocations();
+		} catch(Exception e) {
+			LOGGER.error("Error getting locations:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return locations;
+	}
+
+	public StandardReturnObject changeHomepageImage(ImageInfo newImage) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		// Get the file and save it somewhere
+		try {
+	        dao.saveToFileSystem(HOMEPAGE_IMAGE_FOLDER_FIRST_PART, HOMEPAGE_IMAGE_FILE_NAME, newImage.getBase64EncodedImage());
+	        ret.setMessage("Successfully uploaded image.");
+		} catch (Exception e) {
+			LOGGER.error("Error uploading file:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "ERROR: exception encountered when uploading image");
+		}
+		
+		return ret;
+	}
+
+	public ImageInfo getHomepageImage() {
+		Path filePath = Paths.get(HOMEPAGE_IMAGE_FOLDER_FIRST_PART, HOMEPAGE_IMAGE_FILE_NAME);
+		ImageInfo ret = new ImageInfo();
+        try {
+        	ret.setBase64EncodedImage(dao.getImageFromFileSystemAsBase64String(filePath));
+		} catch (Exception e) {
+			LOGGER.error("Error getting homepage image from file system:");
+			LOGGER.error(e.getMessage(), e);
+		}
+        
+        return ret;
 	}
 }

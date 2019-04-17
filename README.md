@@ -37,3 +37,13 @@
     1. "Profiles" should be empty
 5. You should see some output in the console ending with something like "Started BehaviorEnrichmentJavaApplication in..."
 6. Application is now listening on port http://localhost:8080
+
+## Deploying Permanently
+1. Right click on project in Eclipse
+2. Click "Run As" -> "Maven build..."
+3. Set Goals as "-Dmaven.test.skip=true package"
+4. Upload resulting .jar to deployment location.
+5. Run .jar using "java -jar JAR_NAME"
+6. Use "lsof -i :8080" to determine the PID of the process for future reference.
+7. Optionally, since a .jar cannot be run by PM2 or similar process managers for Linux, the .jar may be run as a service.
+How to: https://dzone.com/articles/run-your-java-application-as-a-service-on-ubuntu

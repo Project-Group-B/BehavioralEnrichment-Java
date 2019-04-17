@@ -2,10 +2,11 @@ package com.uno.zoo.dto;
 
 public class ItemForm {
 	private String itemName;
-	private String photo;
+	private String base64EncodedPhoto;
 	private String comments;
 	private String safetyNotes;
 	private String exceptions;
+	private String submittor;
 	
 	public String getItemName() {
 		return itemName;
@@ -13,11 +14,11 @@ public class ItemForm {
 	public void setItemName(String itemName) {
 		this.itemName = itemName;
 	}
-	public String getPhoto() {
-		return photo;
+	public String getBase64EncodedPhoto() {
+		return base64EncodedPhoto;
 	}
-	public void setPhoto(String photo) {
-		this.photo = photo;
+	public void setBase64EncodedPhoto(String photo) {
+		this.base64EncodedPhoto = photo;
 	}
 	public String getComments() {
 		return comments;
@@ -36,5 +37,11 @@ public class ItemForm {
 	}
 	public void setExceptions(String exceptions) {
 		this.exceptions = exceptions;
+	}
+	public String getSubmittor() {
+		return submittor;
+	}
+	public void setSubmittor(String submittor) {
+		this.submittor = submittor;
 	}
 }
