@@ -1,5 +1,9 @@
 package com.uno.zoo.dao;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,12 +12,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -42,6 +50,8 @@ import com.uno.zoo.dto.UserSignUp;
 
 @Component
 public class DAO extends NamedParameterJdbcDaoSupport {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DAO.class);
+	
 	private static final String LOGIN_USER_SQL = "SELECT a.User_Id, a.User_Name, a.User_Status, a.User_FirstName, a.User_LastName, b.Department_Name from user as a INNER JOIN department as b ON a.User_Department=b.Department_Id WHERE User_Name = :username AND User_Pass = sha2(:password, 256) AND User_Status != 2";
 	private static final String USERNAME_EXISTS_SQL = "SELECT EXISTS (SELECT 1 FROM user WHERE User_Name = :username) AS doesExist";
 	private static final String CHECK_IS_ADMIN_SQL = "SELECT User_Status from user WHERE User_Name = :username";
@@ -68,7 +78,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			+ ":contact, :safetyQuestions, :risksHazards, :goal, "
 			+ ":source, :timeRequired, :construction, :volunteers, "
 			+ ":inventory, :concerns, :approvedBy, :isApproved)";
-	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_Photo, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
+	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_PathToPhoto, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
 	private static final String INSERT_NEW_ANIMAL_SQL = "INSERT INTO animal (Animal_IsisNumber, Animal_Species, Animal_Location, Animal_Housing, Animal_ActivityCycle, Animal_Age) VALUES (:isis, :species, :location, :housing, :activityCycle, :age)";
 	private static final String DEACTIVATE_USER_SQL = "UPDATE user SET User_Status = 2 WHERE User_Id = :userId AND User_Name = :username";
 	private static final String REACTIVATE_USER_SQL = "UPDATE user SET User_Status = 0 WHERE User_Id = :userId AND User_Name = :username";
@@ -232,8 +242,9 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		params.addValue("safetyNotes", form.getSafetyNotes());
 		params.addValue("exceptions", form.getExceptions());
 		
-		String photoFileName = form.getItemName().replaceAll(" ", "_").toLowerCase() + "_submitted_by_user_" + form.getSubmittor();
-		saveToFileSystem(DEFAULT_PHOTO_LOCATION, photoFileName, Base64.getDecoder().decode(form.getBase64EncodedPhoto().split(",")[1].getBytes()));
+		String photoFileName = form.getItemName().replaceAll(" ", "_").toLowerCase() + "_submitted_by_user_" + form.getSubmittor() + ".jpg";
+		LOGGER.info("Saving photo with name '{}' to path '{}'", photoFileName, DEFAULT_PHOTO_LOCATION);
+		saveToFileSystem(DEFAULT_PHOTO_LOCATION, photoFileName, form.getBase64EncodedPhoto());
 		params.addValue("photo", DEFAULT_PHOTO_LOCATION + "/" + photoFileName);
 		
 		int rowsAffected = getNamedParameterJdbcTemplate().update(INSERT_NEW_ITEM_SQL, params);
@@ -544,9 +555,31 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	 * @param decodedImage
 	 * @throws IOException
 	 */
-	public void saveToFileSystem(String filesystemPath, String fileName, byte[] decodedImage) throws IOException {
-		Path path = Paths.get(filesystemPath + fileName + ".jpg");
-		Files.write(path, decodedImage);
+	public void saveToFileSystem(String filesystemPath, String fileName, String base64String) throws IOException {
+		FileOutputStream fos = new FileOutputStream(filesystemPath + "/" + fileName);
+		fos.write(Base64.getDecoder().decode(base64String.split(",")[1]));
+		fos.close();
+	}
+	
+	/**
+	 * Gets the image from the file system as a Base64 encoded string.<br/>
+	 * You will need to add the base64 prefix before it will display: "data:image/jpg;base64," + base64EncodedString
+	 * @param filePath Full path to image, including image name. Use Paths.get(HOMEPAGE_IMAGE_FOLDER_FIRST_PART, HOMEPAGE_IMAGE_FILE_NAME);
+	 * @return Base64 encoded string without the prefix "data:image/jpg;base64,"
+	 * @throws IOException When reading image from file system.
+	 */
+	public String getImageFromFileSystemAsBase64String(Path filePath) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		Encoder base64Encoder = Base64.getEncoder();
+		String base64EncodedImage = "";
+		
+		BufferedImage img = ImageIO.read(new File(filePath.toUri()));
+		
+    	ImageIO.write(img, "jpg", baos);
+    	byte[] imgBytes = baos.toByteArray();
+    	base64EncodedImage = base64Encoder.encodeToString(imgBytes);
+    	
+    	return base64EncodedImage;
 	}
 	
 	/**

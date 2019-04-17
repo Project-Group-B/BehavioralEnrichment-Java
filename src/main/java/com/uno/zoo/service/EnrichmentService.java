@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +18,7 @@ import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.EditUserInfo;
+import com.uno.zoo.dto.ImageInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
@@ -361,17 +360,18 @@ public class EnrichmentService {
 		return ret;
 	}
 
-	public Resource getHomepageImage() {
+	public ImageInfo getHomepageImage() {
 		Path filePath = Paths.get(
 				HOMEPAGE_IMAGE_FOLDER_FIRST_PART,
 				HOMEPAGE_IMAGE_FILE_NAME);
-		Resource resource = null;
+		ImageInfo ret = new ImageInfo();
         try {
-			resource = new UrlResource(filePath.toUri());
+        	ret.setBase64EncodedImage(dao.getImageFromFileSystemAsBase64String(filePath));
 		} catch (Exception e) {
 			LOGGER.error("Error getting homepage image from file system:");
 			LOGGER.error(e.getMessage(), e);
 		}
-        return resource;
+        
+        return ret;
 	}
 }

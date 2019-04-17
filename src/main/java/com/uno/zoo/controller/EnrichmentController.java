@@ -1,13 +1,9 @@
 package com.uno.zoo.controller;
 
-import java.io.InputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +22,7 @@ import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.EditUserInfo;
+import com.uno.zoo.dto.ImageInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
@@ -40,7 +37,6 @@ import com.uno.zoo.service.EnrichmentService;
 @RestController
 @CrossOrigin
 public class EnrichmentController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EnrichmentController.class);
 	private EnrichmentService service;
 	private static String sessionId;
 	private static final String USERNAME_LENGTH_ERROR_MSG = "Username must be between 1 and 25 characters.";
@@ -171,16 +167,9 @@ public class EnrichmentController {
 		}
 	}
 	
-	@GetMapping(path = "getHomepageImage", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
-	public void getHomepageImage(HttpServletResponse response) {
-		try {
-			InputStream in = service.getHomepageImage().getInputStream();
-			response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-			IOUtils.copy(in, response.getOutputStream());
-		} catch (Exception e) {
-			LOGGER.error("Error returning homepage image:");
-			LOGGER.error(e.getMessage(), e);
-		}
+	@GetMapping(path = "getHomepageImage", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ImageInfo getHomepageImage(HttpServletResponse response) {
+		return service.getHomepageImage();
 	}
 	
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)
