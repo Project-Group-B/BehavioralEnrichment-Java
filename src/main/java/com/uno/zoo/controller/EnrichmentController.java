@@ -1,23 +1,17 @@
 package com.uno.zoo.controller;
 
-import java.io.InputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.uno.zoo.dto.AnimalForm;
 import com.uno.zoo.dto.AnimalInfo;
@@ -26,6 +20,7 @@ import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.EditUserInfo;
+import com.uno.zoo.dto.ImageInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
@@ -40,13 +35,10 @@ import com.uno.zoo.service.EnrichmentService;
 @RestController
 @CrossOrigin
 public class EnrichmentController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EnrichmentController.class);
 	private EnrichmentService service;
 	private static String sessionId;
 	private static final String USERNAME_LENGTH_ERROR_MSG = "Username must be between 1 and 25 characters.";
 	private static final String USERNAME_PASSWORD_ERROR = "Username or password invalid.";
-	private static final String EMPTY_FILE_ERROR_MSG = "ERROR: File empty. Please select an image to upload.";
-	private static final String NOT_AN_IMAGE_ERROR_MSG = "ERROR: File must be an image.";
 	
 	public EnrichmentController(EnrichmentService service) {
 		this.service = service;
@@ -156,31 +148,13 @@ public class EnrichmentController {
 	
 	@PostMapping(path = "homepageImage", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public StandardReturnObject changeHomepageImage(@RequestParam("file") MultipartFile file) {
-		StandardReturnObject retObject = new StandardReturnObject();
-		if(file.isEmpty()) {
-			retObject.setError(true, EMPTY_FILE_ERROR_MSG);
-			return retObject;
-		} else {
-			if(file.getContentType().startsWith("image")) {
-				return service.changeHomepageImage(file);
-			} else {
-				retObject.setError(true, NOT_AN_IMAGE_ERROR_MSG);
-				return retObject;
-			}
-		}
+	public StandardReturnObject changeHomepageImage(@RequestBody ImageInfo newImage) {
+		return service.changeHomepageImage(newImage);
 	}
 	
-	@GetMapping(path = "getHomepageImage", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
-	public void getHomepageImage(HttpServletResponse response) {
-		try {
-			InputStream in = service.getHomepageImage().getInputStream();
-			response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-			IOUtils.copy(in, response.getOutputStream());
-		} catch (Exception e) {
-			LOGGER.error("Error returning homepage image:");
-			LOGGER.error(e.getMessage(), e);
-		}
+	@GetMapping(path = "getHomepageImage", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ImageInfo getHomepageImage(HttpServletResponse response) {
+		return service.getHomepageImage();
 	}
 	
 	@GetMapping(path = "departments", produces = MediaType.APPLICATION_JSON_VALUE)

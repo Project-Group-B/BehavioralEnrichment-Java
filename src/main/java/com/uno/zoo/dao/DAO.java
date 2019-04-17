@@ -1,18 +1,24 @@
 package com.uno.zoo.dao;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.sql.DataSource;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -20,7 +26,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.uno.zoo.dto.AnimalForm;
 import com.uno.zoo.dto.AnimalInfo;
@@ -41,6 +46,8 @@ import com.uno.zoo.dto.UserSignUp;
 
 @Component
 public class DAO extends NamedParameterJdbcDaoSupport {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DAO.class);
+	
 	private static final String LOGIN_USER_SQL = "SELECT a.User_Id, a.User_Name, a.User_Status, a.User_FirstName, a.User_LastName, b.Department_Name from user as a INNER JOIN department as b ON a.User_Department=b.Department_Id WHERE User_Name = :username AND User_Pass = sha2(:password, 256) AND User_Status != 2";
 	private static final String USERNAME_EXISTS_SQL = "SELECT EXISTS (SELECT 1 FROM user WHERE User_Name = :username) AS doesExist";
 	private static final String CHECK_IS_ADMIN_SQL = "SELECT User_Status from user WHERE User_Name = :username";
@@ -67,7 +74,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 			+ ":contact, :safetyQuestions, :risksHazards, :goal, "
 			+ ":source, :timeRequired, :construction, :volunteers, "
 			+ ":inventory, :concerns, :approvedBy, :isApproved)";
-	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_Photo, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
+	private static final String INSERT_NEW_ITEM_SQL = "INSERT INTO item (Item_Name, Item_PathToPhoto, Item_ApprovalStatus, Item_Comments, Item_SafetyNotes, Item_Exceptions) VALUES (:name, :photo, :approval, :comments, :safetyNotes, :exceptions)";
 	private static final String INSERT_NEW_ANIMAL_SQL = "INSERT INTO animal (Animal_IsisNumber, Animal_Species, Animal_Location, Animal_Housing, Animal_ActivityCycle, Animal_Age) VALUES (:isis, :species, :location, :housing, :activityCycle, :age)";
 	private static final String DEACTIVATE_USER_SQL = "UPDATE user SET User_Status = 2 WHERE User_Id = :userId AND User_Name = :username";
 	private static final String REACTIVATE_USER_SQL = "UPDATE user SET User_Status = 0 WHERE User_Id = :userId AND User_Name = :username";
@@ -76,6 +83,8 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String CHANGE_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:newPassword, 256) WHERE User_Id = :id AND User_Name = :username AND User_Pass = sha2(:oldPassword, 256)";
 	private static final String ADD_NEW_DEPARTMENT_SQL = "INSERT INTO department (Department_Name) VALUES (:deptName)";
 	private static final String REMOVE_DEPARTMENT_BY_ID_SQL = "DELETE FROM department WHERE Department_Id = :id";
+	
+	public static final String DEFAULT_PHOTO_LOCATION = "D:/Zoo_Item_Photos";
 	
 	public DAO(DataSource dataSource) {
 		super.setDataSource(dataSource);
@@ -221,19 +230,19 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	 * @return {@link StandardReturnObject}
 	 */
 	public StandardReturnObject insertNewItem(ItemForm form) throws DataAccessException, Exception {
-		// TODO: submit image options:
-	    // https://stackoverflow.com/questions/1665730/images-in-mysql
-	    // https://stackoverflow.com/questions/3014578/storing-images-in-mysql
-	    // https://stackoverflow.com/questions/6472233/can-i-store-images-in-mysql
-	    // https://www.quora.com/What-is-the-best-way-to-store-100-images-in-a-MySQL-database-in-this-case
 		StandardReturnObject retObject = new StandardReturnObject();
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("name", form.getItemName());
-		params.addValue("photo", form.getPhoto());
 		params.addValue("approval", 2);
 		params.addValue("comments", form.getComments());
 		params.addValue("safetyNotes", form.getSafetyNotes());
 		params.addValue("exceptions", form.getExceptions());
+		
+		String photoFileName = form.getItemName().replaceAll(" ", "_").toLowerCase() + "_submitted_by_user_" + form.getSubmittor() + ".jpg";
+		LOGGER.info("Saving photo with name '{}' to path '{}'...", photoFileName, DEFAULT_PHOTO_LOCATION);
+		saveToFileSystem(DEFAULT_PHOTO_LOCATION, photoFileName, form.getBase64EncodedPhoto());
+		LOGGER.info("successfully saved new item photo.");
+		params.addValue("photo", DEFAULT_PHOTO_LOCATION + "/" + photoFileName);
 		
 		int rowsAffected = getNamedParameterJdbcTemplate().update(INSERT_NEW_ITEM_SQL, params);
 		if(rowsAffected <= 0) {
@@ -521,19 +530,37 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	}
 	
 	/**
-	 * Saves the MultipartFile to the file system at the path specified, named according to the file name
-	 * passed in.<br/>
-	 * Example: The file with name "image1.jpg" will be saved to D:/test/abc.jpg if the paramaters are ("D:/test/", "abc.jpg", image1.jpg).
-	 * @param filesystemPath The complete path (with trailing "/") to save the file to
-	 * @param fileName The name the given file will be saved to the file system as
-	 * @param fileToSave The {@link MultipartFile} to save
-	 * @throws IOException If there's a problem getting the byte array of the file or writing the file to the file system.
+	 * Saves the Base64 encoded image string to the file system.
+	 * @param filesystemPath
+	 * @param fileName
+	 * @param decodedImage
+	 * @throws IOException
 	 */
-	public void saveFileToFileSystem(String filesystemPath, String fileName, MultipartFile fileToSave) throws IOException {
-		byte[] bytes = fileToSave.getBytes();
-		String extension = FilenameUtils.getExtension(fileToSave.getOriginalFilename());
-        Path path = Paths.get(filesystemPath + fileName + "." + extension);
-        Files.write(path, bytes);
+	public void saveToFileSystem(String filesystemPath, String fileName, String base64String) throws IOException {
+		FileOutputStream fos = new FileOutputStream(filesystemPath + "/" + fileName);
+		fos.write(Base64.getDecoder().decode(base64String.split(",")[1]));
+		fos.close();
+	}
+	
+	/**
+	 * Gets the image from the file system as a Base64 encoded string.<br/>
+	 * You will need to add the base64 prefix before it will display: "data:image/jpg;base64," + base64EncodedString
+	 * @param filePath Full path to image, including image name. Use Paths.get(HOMEPAGE_IMAGE_FOLDER_FIRST_PART, HOMEPAGE_IMAGE_FILE_NAME);
+	 * @return Base64 encoded string without the prefix "data:image/jpg;base64,"
+	 * @throws IOException When reading image from file system.
+	 */
+	public String getImageFromFileSystemAsBase64String(Path filePath) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		Encoder base64Encoder = Base64.getEncoder();
+		String base64EncodedImage = "";
+		
+		BufferedImage img = ImageIO.read(new File(filePath.toUri()));
+		
+    	ImageIO.write(img, "jpg", baos);
+    	byte[] imgBytes = baos.toByteArray();
+    	base64EncodedImage = base64Encoder.encodeToString(imgBytes);
+    	
+    	return base64EncodedImage;
 	}
 	
 	/**
