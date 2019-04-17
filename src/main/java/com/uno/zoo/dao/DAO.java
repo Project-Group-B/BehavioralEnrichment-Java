@@ -243,8 +243,9 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		params.addValue("exceptions", form.getExceptions());
 		
 		String photoFileName = form.getItemName().replaceAll(" ", "_").toLowerCase() + "_submitted_by_user_" + form.getSubmittor() + ".jpg";
-		LOGGER.info("Saving photo with name '{}' to path '{}'", photoFileName, DEFAULT_PHOTO_LOCATION);
+		LOGGER.info("Saving photo with name '{}' to path '{}'...", photoFileName, DEFAULT_PHOTO_LOCATION);
 		saveToFileSystem(DEFAULT_PHOTO_LOCATION, photoFileName, form.getBase64EncodedPhoto());
+		LOGGER.info("successfully saved new item photo.");
 		params.addValue("photo", DEFAULT_PHOTO_LOCATION + "/" + photoFileName);
 		
 		int rowsAffected = getNamedParameterJdbcTemplate().update(INSERT_NEW_ITEM_SQL, params);
