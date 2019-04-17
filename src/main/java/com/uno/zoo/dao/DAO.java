@@ -5,9 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,7 +16,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.sql.DataSource;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +26,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.uno.zoo.dto.AnimalForm;
 import com.uno.zoo.dto.AnimalInfo;
@@ -534,23 +530,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	}
 	
 	/**
-	 * Saves the MultipartFile to the file system at the path specified, named according to the file name
-	 * passed in.<br/>
-	 * Example: The file with name "image1.jpg" will be saved to D:/test/abc.jpg if the paramaters are ("D:/test/", "abc.jpg", image1.jpg).
-	 * @param filesystemPath The complete path (with trailing "/") to save the file to
-	 * @param fileName The name the given file will be saved to the file system as
-	 * @param fileToSave The {@link MultipartFile} to save
-	 * @throws IOException If there's a problem getting the byte array of the file or writing the file to the file system.
-	 */
-	public void saveFileToFileSystem(String filesystemPath, String fileName, MultipartFile fileToSave) throws IOException {
-		byte[] bytes = fileToSave.getBytes();
-		String extension = FilenameUtils.getExtension(fileToSave.getOriginalFilename());
-		Path path = Paths.get(filesystemPath + fileName + "." + extension);
-		Files.write(path, bytes);
-	}
-	
-	/**
-	 * Saves the Base64 decoded image to the file system.
+	 * Saves the Base64 encoded image string to the file system.
 	 * @param filesystemPath
 	 * @param fileName
 	 * @param decodedImage
