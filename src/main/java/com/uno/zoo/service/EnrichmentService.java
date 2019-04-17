@@ -8,7 +8,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.uno.zoo.dao.DAO;
 import com.uno.zoo.dto.AnimalForm;
@@ -344,12 +343,12 @@ public class EnrichmentService {
 		return locations;
 	}
 
-	public StandardReturnObject changeHomepageImage(MultipartFile image) {
+	public StandardReturnObject changeHomepageImage(ImageInfo newImage) {
 		StandardReturnObject ret = new StandardReturnObject();
 		
 		// Get the file and save it somewhere
 		try {
-	        dao.saveFileToFileSystem(HOMEPAGE_IMAGE_FOLDER_FIRST_PART, HOMEPAGE_IMAGE_FILE_NAME, image);
+	        dao.saveToFileSystem(HOMEPAGE_IMAGE_FOLDER_FIRST_PART, HOMEPAGE_IMAGE_FILE_NAME, newImage.getBase64EncodedImage());
 	        ret.setMessage("Successfully uploaded image.");
 		} catch (Exception e) {
 			LOGGER.error("Error uploading file:");
@@ -361,9 +360,7 @@ public class EnrichmentService {
 	}
 
 	public ImageInfo getHomepageImage() {
-		Path filePath = Paths.get(
-				HOMEPAGE_IMAGE_FOLDER_FIRST_PART,
-				HOMEPAGE_IMAGE_FILE_NAME);
+		Path filePath = Paths.get(HOMEPAGE_IMAGE_FOLDER_FIRST_PART, HOMEPAGE_IMAGE_FILE_NAME);
 		ImageInfo ret = new ImageInfo();
         try {
         	ret.setBase64EncodedImage(dao.getImageFromFileSystemAsBase64String(filePath));

@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.uno.zoo.dto.AnimalForm;
 import com.uno.zoo.dto.AnimalInfo;
@@ -41,8 +39,6 @@ public class EnrichmentController {
 	private static String sessionId;
 	private static final String USERNAME_LENGTH_ERROR_MSG = "Username must be between 1 and 25 characters.";
 	private static final String USERNAME_PASSWORD_ERROR = "Username or password invalid.";
-	private static final String EMPTY_FILE_ERROR_MSG = "ERROR: File empty. Please select an image to upload.";
-	private static final String NOT_AN_IMAGE_ERROR_MSG = "ERROR: File must be an image.";
 	
 	public EnrichmentController(EnrichmentService service) {
 		this.service = service;
@@ -152,19 +148,8 @@ public class EnrichmentController {
 	
 	@PostMapping(path = "homepageImage", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public StandardReturnObject changeHomepageImage(@RequestParam("file") MultipartFile file) {
-		StandardReturnObject retObject = new StandardReturnObject();
-		if(file.isEmpty()) {
-			retObject.setError(true, EMPTY_FILE_ERROR_MSG);
-			return retObject;
-		} else {
-			if(file.getContentType().startsWith("image")) {
-				return service.changeHomepageImage(file);
-			} else {
-				retObject.setError(true, NOT_AN_IMAGE_ERROR_MSG);
-				return retObject;
-			}
-		}
+	public StandardReturnObject changeHomepageImage(@RequestBody ImageInfo newImage) {
+		return service.changeHomepageImage(newImage);
 	}
 	
 	@GetMapping(path = "getHomepageImage", produces = {MediaType.APPLICATION_JSON_VALUE})
