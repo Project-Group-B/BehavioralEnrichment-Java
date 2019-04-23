@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import com.uno.zoo.dto.AnimalForm;
 import com.uno.zoo.dto.AnimalInfo;
+import com.uno.zoo.dto.ApprovedEntry;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
@@ -84,6 +85,15 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String ADD_NEW_DEPARTMENT_SQL = "INSERT INTO department (Department_Name) VALUES (:deptName)";
 	private static final String REMOVE_DEPARTMENT_BY_ID_SQL = "DELETE FROM department WHERE Department_Id = :id";
 	
+	private static final String GET_APPROVED_ITEM_SQL = "SELECT Item_Name, Behavior_Name, Item_ApprovalStatus, Item_DateApproved, Item_SafetyNotes, Item_Exceptions, Item_Comments, Species_Name, Category_Name " 
+	+ " FROM item"
+	+" INNER JOIN `item/behavior` ON item.Item_Id=`item/behavior`.Item_Id"
+	+" INNER JOIN behavior ON `item/behavior`.Behavior_Id=behavior.Behavior_Id"
+	+" INNER JOIN `item/species` ON item.Item_Id=`item/species`.Item_Id"
+	+" INNER JOIN species ON `item/species`.Species_Id=species.Species_Id"
+	+" INNER JOIN `item/category` ON item.Item_Id=`item/category`.Item_Id"
+	+" INNER JOIN category ON `item/category`.Category_Id=category.Category_Id WHERE item.Item_ApprovalStatus = 1;";
+
 	public static final String DEFAULT_PHOTO_LOCATION = "D:/Zoo_Item_Photos";
 	
 	public DAO(DataSource dataSource) {
@@ -624,5 +634,28 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		builder.append(StringUtils.left(lastName.toLowerCase(), 5));
 		
 		return builder.toString();
+	}
+
+	public List<ApprovedEntry> getApprovedEntries() {
+		ResultSetExtractor<List<ApprovedEntry>> rowMapper = new ResultSetExtractor<List<ApprovedEntry>>() {
+			@Override public List<ApprovedEntry> extractData(ResultSet rs) throws SQLException {
+				List<ApprovedEntry> info = new ArrayList<>();
+				while(rs.next()) {
+					ApprovedEntry newApprovedEnry = new ApprovedEntry();
+					newApprovedEnry.setEnrichmentItem(rs.getString("Item_Name"));
+					newApprovedEnry.setBehaviorsEncouraged(rs.getString("Behavior_Name"));
+					newApprovedEnry.setDateApproved(rs.getString("Item_DateApproved"));
+					newApprovedEnry.setSafetyConcerns(rs.getString("Item_SafetyNotes"));
+					newApprovedEnry.setExceptions(rs.getString("Item_Exceptions"));
+					newApprovedEnry.setComments(rs.getString("Item_Comments"));
+					newApprovedEnry.setSpecies(rs.getString("Species_Name"));
+					newApprovedEnry.setCategory(rs.getString("Category_Name"));
+					info.add(newApprovedEnry);
+				}
+				return info;
+			} 
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_APPROVED_ITEM_SQL, rowMapper);
 	}
 }
