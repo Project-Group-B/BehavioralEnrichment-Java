@@ -2,246 +2,246 @@ package com.uno.zoo.dto;
 
 public class EnrichmentForm {
     private String enrichmentIsApproved;
-	private String Enrichment_DateSubmitted;
-	private String Enrichment_Name;
-	private String Submittor_User_Name;
-	private String Department_Name;
-	private String Item_Name;
-	private String Species_Name;
-	private String Animal_IsisNumber;
-    private String Enrichment_Description; 
-    private String Location_Name;
-    private String Enrichment_PresentationMethod;
-    private String Enrichment_TimeStart;
-    private String Enrichment_TimeEnd;
-    private String Enrichment_Frequency;
-    private String Enrichment_LifeStrategies;
-    private String Enrichment_PreviousUse;
-    private String Enrichment_Contact;
-    private String Enrichment_SafetyQuestions;
-    private String Enrichment_RisksHazards;
-    private String Enrichment_Goal;
-    private String Enrichment_Source;
-    private String Enrichment_TimeRequired;
-    private String Enrichment_Construction;
-    private String Enrichment_Volunteers;
-    private String Enrichment_Inventory;
-    private String Enrichment_Concerns;
-    private String Appoval_User_Name;
+	private String EnrichmentDateSubmitted;
+	private String EnrichmentName;
+	private String SubmittorUserName;
+	private String DepartmentName;
+	private String ItemName;
+	private String SpeciesName;
+	private String AnimalIsisNumber;
+    private String EnrichmentDescription; 
+    private String LocationName;
+    private String EnrichmentPresentationMethod;
+    private String EnrichmentTimeStart;
+    private String EnrichmentTimeEnd;
+    private String EnrichmentFrequency;
+    private String EnrichmentLifeStrategies;
+    private String EnrichmentPreviousUse;
+    private String EnrichmentContact;
+    private String EnrichmentSafetyQuestions;
+    private String EnrichmentRisksHazards;
+    private String EnrichmentGoal;
+    private String EnrichmentSource;
+    private String EnrichmentTimeRequired;
+    private String EnrichmentConstruction;
+    private String EnrichmentVolunteers;
+    private String EnrichmentInventory;
+    private String EnrichmentConcerns;
+    private String AppovalUserName;
 
-    public String getAnimal_IsisNumber() {
-        return Animal_IsisNumber;
+    public String getAnimalIsisNumber() {
+        return AnimalIsisNumber;
     }
 
-    public void setAnimal_IsisNumber(String Animal_IsisNumber) {
-        this.Animal_IsisNumber = Animal_IsisNumber;
+    public void setAnimalIsisNumber(String AnimalIsisNumber) {
+        this.AnimalIsisNumber = AnimalIsisNumber;
     }
 
-    public String getAppoval_User_Name() {
-        return Appoval_User_Name;
+    public String getAppovalUserName() {
+        return AppovalUserName;
     }
 
-    public void setAppoval_User_Name(String Appoval_User_Name) {
-        this.Appoval_User_Name = Appoval_User_Name;
+    public void setAppovalUserName(String AppovalUserName) {
+        this.AppovalUserName = AppovalUserName;
     }
 
-    public String getDepartment_Name() {
-        return Department_Name;
+    public String getDepartmentName() {
+        return DepartmentName;
     }
 
-    public void setDepartment_Name(String Department_Name) {
-        this.Department_Name = Department_Name;
+    public void setDepartmentName(String DepartmentName) {
+        this.DepartmentName = DepartmentName;
     }
 
-    public String getEnrichment_Concerns() {
-        return Enrichment_Concerns;
+    public String getEnrichmentConcerns() {
+        return EnrichmentConcerns;
     }
 
-    public void setEnrichment_Concerns(String Enrichment_Concerns) {
-        this.Enrichment_Concerns = Enrichment_Concerns;
+    public void setEnrichmentConcerns(String EnrichmentConcerns) {
+        this.EnrichmentConcerns = EnrichmentConcerns;
     }
 
-    public String getEnrichment_Construction() {
-        return Enrichment_Construction;
+    public String getEnrichmentConstruction() {
+        return EnrichmentConstruction;
     }
 
-    public void setEnrichment_Construction(String Enrichment_Construction) {
-        this.Enrichment_Construction = Enrichment_Construction;
+    public void setEnrichmentConstruction(String EnrichmentConstruction) {
+        this.EnrichmentConstruction = EnrichmentConstruction;
     }
 
-    public String getEnrichment_Contact() {
-        return Enrichment_Contact;
+    public String getEnrichmentContact() {
+        return EnrichmentContact;
     }
 
-    public void setEnrichment_Contact(String Enrichment_Contact) {
-        this.Enrichment_Contact = Enrichment_Contact;
+    public void setEnrichmentContact(String EnrichmentContact) {
+        this.EnrichmentContact = EnrichmentContact;
     }
 
-    public String getEnrichment_DateSubmitted() {
-        return Enrichment_DateSubmitted;
+    public String getEnrichmentDateSubmitted() {
+        return EnrichmentDateSubmitted;
     }
 
-    public void setEnrichment_DateSubmitted(String Enrichment_DateSubmitted) {
-        this.Enrichment_DateSubmitted = Enrichment_DateSubmitted;
+    public void setEnrichmentDateSubmitted(String EnrichmentDateSubmitted) {
+        this.EnrichmentDateSubmitted = EnrichmentDateSubmitted;
     }
 
-    public String getEnrichment_Description() {
-        return Enrichment_Description;
+    public String getEnrichmentDescription() {
+        return EnrichmentDescription;
     }
 
-    public void setEnrichment_Description(String Enrichment_Description) {
-        this.Enrichment_Description = Enrichment_Description;
+    public void setEnrichmentDescription(String EnrichmentDescription) {
+        this.EnrichmentDescription = EnrichmentDescription;
     }
 
-    public String getEnrichment_Frequency() {
-        return Enrichment_Frequency;
+    public String getEnrichmentFrequency() {
+        return EnrichmentFrequency;
     }
 
-    public void setEnrichment_Frequency(String Enrichment_Frequency) {
-        this.Enrichment_Frequency = Enrichment_Frequency;
+    public void setEnrichmentFrequency(String EnrichmentFrequency) {
+        this.EnrichmentFrequency = EnrichmentFrequency;
     }
 
-    public String getEnrichment_Goal() {
-        return Enrichment_Goal;
+    public String getEnrichmentGoal() {
+        return EnrichmentGoal;
     }
 
-    public void setEnrichment_Goal(String Enrichment_Goal) {
-        this.Enrichment_Goal = Enrichment_Goal;
+    public void setEnrichmentGoal(String EnrichmentGoal) {
+        this.EnrichmentGoal = EnrichmentGoal;
     }
 
-    public String getEnrichment_Inventory() {
-        return Enrichment_Inventory;
+    public String getEnrichmentInventory() {
+        return EnrichmentInventory;
     }
 
-    public void setEnrichment_Inventory(String Enrichment_Inventory) {
-        this.Enrichment_Inventory = Enrichment_Inventory;
+    public void setEnrichmentInventory(String EnrichmentInventory) {
+        this.EnrichmentInventory = EnrichmentInventory;
     }
 
     public String getEnrichmentIsApproved() {
         return enrichmentIsApproved;
     }
 
-    public void setEnrichmentIsApproved(String Enrichment_IsApproved) {
-        this.enrichmentIsApproved = Enrichment_IsApproved;
+    public void setEnrichmentIsApproved(String EnrichmentIsApproved) {
+        this.enrichmentIsApproved = EnrichmentIsApproved;
     }
 
-    public String getEnrichment_LifeStrategies() {
-        return Enrichment_LifeStrategies;
+    public String getEnrichmentLifeStrategies() {
+        return EnrichmentLifeStrategies;
     }
 
-    public void setEnrichment_LifeStrategies(String Enrichment_LifeStrategies) {
-        this.Enrichment_LifeStrategies = Enrichment_LifeStrategies;
+    public void setEnrichmentLifeStrategies(String EnrichmentLifeStrategies) {
+        this.EnrichmentLifeStrategies = EnrichmentLifeStrategies;
     }
 
-    public String getEnrichment_Name() {
-        return Enrichment_Name;
+    public String getEnrichmentName() {
+        return EnrichmentName;
     }
 
-    public void setEnrichment_Name(String Enrichment_Name) {
-        this.Enrichment_Name = Enrichment_Name;
+    public void setEnrichmentName(String EnrichmentName) {
+        this.EnrichmentName = EnrichmentName;
     }
 
-    public String getEnrichment_PresentationMethod() {
-        return Enrichment_PresentationMethod;
+    public String getEnrichmentPresentationMethod() {
+        return EnrichmentPresentationMethod;
     }
 
-    public void setEnrichment_PresentationMethod(String Enrichment_PresentationMethod) {
-        this.Enrichment_PresentationMethod = Enrichment_PresentationMethod;
+    public void setEnrichmentPresentationMethod(String EnrichmentPresentationMethod) {
+        this.EnrichmentPresentationMethod = EnrichmentPresentationMethod;
     }
 
-    public String getEnrichment_PreviousUse() {
-        return Enrichment_PreviousUse;
+    public String getEnrichmentPreviousUse() {
+        return EnrichmentPreviousUse;
     }
 
-    public void setEnrichment_PreviousUse(String Enrichment_PreviousUse) {
-        this.Enrichment_PreviousUse = Enrichment_PreviousUse;
+    public void setEnrichmentPreviousUse(String EnrichmentPreviousUse) {
+        this.EnrichmentPreviousUse = EnrichmentPreviousUse;
     }
 
-    public String getEnrichment_RisksHazards() {
-        return Enrichment_RisksHazards;
+    public String getEnrichmentRisksHazards() {
+        return EnrichmentRisksHazards;
     }
 
-    public void setEnrichment_RisksHazards(String Enrichment_RisksHazards) {
-        this.Enrichment_RisksHazards = Enrichment_RisksHazards;
+    public void setEnrichmentRisksHazards(String EnrichmentRisksHazards) {
+        this.EnrichmentRisksHazards = EnrichmentRisksHazards;
     }
 
-    public String getEnrichment_SafetyQuestions() {
-        return Enrichment_SafetyQuestions;
+    public String getEnrichmentSafetyQuestions() {
+        return EnrichmentSafetyQuestions;
     }
 
-    public void setEnrichment_SafetyQuestions(String Enrichment_SafetyQuestions) {
-        this.Enrichment_SafetyQuestions = Enrichment_SafetyQuestions;
+    public void setEnrichmentSafetyQuestions(String EnrichmentSafetyQuestions) {
+        this.EnrichmentSafetyQuestions = EnrichmentSafetyQuestions;
     }
 
-    public String getEnrichment_Source() {
-        return Enrichment_Source;
+    public String getEnrichmentSource() {
+        return EnrichmentSource;
     }
 
-    public void setEnrichment_Source(String Enrichment_Source) {
-        this.Enrichment_Source = Enrichment_Source;
+    public void setEnrichmentSource(String EnrichmentSource) {
+        this.EnrichmentSource = EnrichmentSource;
     }
 
-    public String getEnrichment_TimeEnd() {
-        return Enrichment_TimeEnd;
+    public String getEnrichmentTimeEnd() {
+        return EnrichmentTimeEnd;
     }
 
-    public void setEnrichment_TimeEnd(String Enrichment_TimeEnd) {
-        this.Enrichment_TimeEnd = Enrichment_TimeEnd;
+    public void setEnrichmentTimeEnd(String EnrichmentTimeEnd) {
+        this.EnrichmentTimeEnd = EnrichmentTimeEnd;
     }
 
-    public String getEnrichment_TimeRequired() {
-        return Enrichment_TimeRequired;
+    public String getEnrichmentTimeRequired() {
+        return EnrichmentTimeRequired;
     }
 
-    public void setEnrichment_TimeRequired(String Enrichment_TimeRequired) {
-        this.Enrichment_TimeRequired = Enrichment_TimeRequired;
+    public void setEnrichmentTimeRequired(String EnrichmentTimeRequired) {
+        this.EnrichmentTimeRequired = EnrichmentTimeRequired;
     }
 
-    public String getEnrichment_TimeStart() {
-        return Enrichment_TimeStart;
+    public String getEnrichmentTimeStart() {
+        return EnrichmentTimeStart;
     }
 
-    public void setEnrichment_TimeStart(String Enrichment_TimeStart) {
-        this.Enrichment_TimeStart = Enrichment_TimeStart;
+    public void setEnrichmentTimeStart(String EnrichmentTimeStart) {
+        this.EnrichmentTimeStart = EnrichmentTimeStart;
     }
 
-    public String getEnrichment_Volunteers() {
-        return Enrichment_Volunteers;
+    public String getEnrichmentVolunteers() {
+        return EnrichmentVolunteers;
     }
 
-    public void setEnrichment_Volunteers(String Enrichment_Volunteers) {
-        this.Enrichment_Volunteers = Enrichment_Volunteers;
+    public void setEnrichmentVolunteers(String EnrichmentVolunteers) {
+        this.EnrichmentVolunteers = EnrichmentVolunteers;
     }
 
-    public String getItem_Name() {
-        return Item_Name;
+    public String getItemName() {
+        return ItemName;
     }
 
-    public void setItem_Name(String Item_Name) {
-        this.Item_Name = Item_Name;
+    public void setItemName(String ItemName) {
+        this.ItemName = ItemName;
     }
 
-    public String getLocation_Name() {
-        return Location_Name;
+    public String getLocationName() {
+        return LocationName;
     }
 
-    public void setLocation_Name(String Location_Name) {
-        this.Location_Name = Location_Name;
+    public void setLocationName(String LocationName) {
+        this.LocationName = LocationName;
     }
 
-    public String getSpecies_Name() {
-        return Species_Name;
+    public String getSpeciesName() {
+        return SpeciesName;
     }
 
-    public void setSpecies_Name(String Species_Name) {
-        this.Species_Name = Species_Name;
+    public void setSpeciesName(String SpeciesName) {
+        this.SpeciesName = SpeciesName;
     }
 
-    public String getSubmittor_User_Name() {
-        return Submittor_User_Name;
+    public String getSubmittorUserName() {
+        return SubmittorUserName;
     }
 
-    public void setSubmittor_User_Name(String Submittor_User_Name) {
-        this.Submittor_User_Name = Submittor_User_Name;
+    public void setSubmittorUserName(String SubmittorUserName) {
+        this.SubmittorUserName = SubmittorUserName;
     }
 }
