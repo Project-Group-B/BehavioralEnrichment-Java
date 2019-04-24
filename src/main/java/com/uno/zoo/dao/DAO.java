@@ -45,6 +45,7 @@ import com.uno.zoo.dto.UserInfo;
 import com.uno.zoo.dto.UserListInfo;
 import com.uno.zoo.dto.UserLogIn;
 import com.uno.zoo.dto.UserSignUp;
+import com.uno.zoo.dto.SubmittedIncident;
 
 @Component
 public class DAO extends NamedParameterJdbcDaoSupport {

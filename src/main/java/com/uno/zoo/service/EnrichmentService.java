@@ -29,6 +29,7 @@ import com.uno.zoo.dto.UserInfo;
 import com.uno.zoo.dto.UserListInfo;
 import com.uno.zoo.dto.UserLogIn;
 import com.uno.zoo.dto.UserSignUp;
+import com.uno.zoo.dto.SubmittedIncident;
 
 @Service
 public class EnrichmentService {
