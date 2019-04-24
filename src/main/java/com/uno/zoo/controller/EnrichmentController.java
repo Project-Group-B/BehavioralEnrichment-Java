@@ -40,7 +40,6 @@ import com.uno.zoo.service.EnrichmentService;
 @CrossOrigin
 public class EnrichmentController {
 	private EnrichmentService service;
-	//private IncidentService incidentService;
 	private static String sessionId;
 	private static final String USERNAME_LENGTH_ERROR_MSG = "Username must be between 1 and 25 characters.";
 	private static final String USERNAME_PASSWORD_ERROR = "Username or password invalid.";
@@ -48,8 +47,6 @@ public class EnrichmentController {
 	public EnrichmentController(EnrichmentService service) {
 		this.service = service;
 	}
-	
-
 	
 	@PostMapping(path = "loginUser", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
