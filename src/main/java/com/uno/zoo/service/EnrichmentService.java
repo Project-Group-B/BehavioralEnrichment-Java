@@ -25,11 +25,11 @@ import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
 import com.uno.zoo.dto.SpeciesInfo;
 import com.uno.zoo.dto.StandardReturnObject;
+import com.uno.zoo.dto.SubmittedIncident;
 import com.uno.zoo.dto.UserInfo;
 import com.uno.zoo.dto.UserListInfo;
 import com.uno.zoo.dto.UserLogIn;
 import com.uno.zoo.dto.UserSignUp;
-import com.uno.zoo.dto.SubmittedIncident;
 
 @Service
 public class EnrichmentService {
@@ -444,5 +444,18 @@ public class EnrichmentService {
 		}
 		
 		return EnrichmentForm;
+	}
+
+	public List<SubmittedIncident> getIncidentReport() {
+		List<SubmittedIncident> ret = new ArrayList<>();
+		
+		try {
+			ret = dao.getIncidentReport();
+		} catch (Exception e) {
+			LOGGER.error("Error getting incident report:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return ret;
 	}
 }
