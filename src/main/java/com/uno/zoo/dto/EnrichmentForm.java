@@ -1,7 +1,7 @@
 package com.uno.zoo.dto;
 
 public class EnrichmentForm {
-    private String Enrichment_IsApproved;
+    private String enrichmentIsApproved;
 	private String Enrichment_DateSubmitted;
 	private String Enrichment_Name;
 	private String Submittor_User_Name;
@@ -117,12 +117,12 @@ public class EnrichmentForm {
         this.Enrichment_Inventory = Enrichment_Inventory;
     }
 
-    public String getEnrichment_IsApproved() {
-        return Enrichment_IsApproved;
+    public String getEnrichmentIsApproved() {
+        return enrichmentIsApproved;
     }
 
-    public void setEnrichment_IsApproved(String Enrichment_IsApproved) {
-        this.Enrichment_IsApproved = Enrichment_IsApproved;
+    public void setEnrichmentIsApproved(String Enrichment_IsApproved) {
+        this.enrichmentIsApproved = Enrichment_IsApproved;
     }
 
     public String getEnrichment_LifeStrategies() {

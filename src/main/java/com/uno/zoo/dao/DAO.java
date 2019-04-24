@@ -741,7 +741,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 					EnrichmentForm.setEnrichment_Goal(rs.getString("Enrichment_Goal"));
 
 					EnrichmentForm.setEnrichment_Inventory(rs.getString("Enrichment_Inventory"));
-					EnrichmentForm.setEnrichment_IsApproved(rs.getString("Enrichment_IsApproved"));
+					EnrichmentForm.setEnrichmentIsApproved(rs.getString("Enrichment_IsApproved"));
 					EnrichmentForm.setEnrichment_LifeStrategies(rs.getString("Enrichment_LifeStrategies"));
 					EnrichmentForm.setEnrichment_Name(rs.getString("Enrichment_Name"));
 					EnrichmentForm.setEnrichment_PresentationMethod(rs.getString("Enrichment_PresentationMethod"));
