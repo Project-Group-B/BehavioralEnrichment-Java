@@ -273,6 +273,36 @@ public class EnrichmentService {
 		
 		return categories;
 	}
+	
+	public StandardReturnObject addSpecies(SpeciesInfo species) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.addNewSpecies(species);
+			ret.setMessage("Successfully added species '" + species.getSpeciesName() + "'");
+		} catch(Exception e) {
+			LOGGER.info("Error adding species into database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error adding species - with thrown exception");
+		}
+		
+		return ret;
+	}
+
+	public StandardReturnObject removeSpecies(SpeciesInfo speciesId) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.removeSpecies(speciesId);
+			ret.setMessage("Successfully removed species with id '" + speciesId.getSpeciesId() + "'");
+		} catch(Exception e) {
+			LOGGER.info("Error removing species from database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error removing species - with thrown exception");
+		}
+		
+		return ret;
+	}
 
 	/**
 	 * Gets a list of all species from the database.

@@ -83,6 +83,8 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String CHANGE_PASSWORD_SQL = "UPDATE user SET User_Pass = sha2(:newPassword, 256) WHERE User_Id = :id AND User_Name = :username AND User_Pass = sha2(:oldPassword, 256)";
 	private static final String ADD_NEW_DEPARTMENT_SQL = "INSERT INTO department (Department_Name) VALUES (:deptName)";
 	private static final String REMOVE_DEPARTMENT_BY_ID_SQL = "DELETE FROM department WHERE Department_Id = :id";
+	private static final String ADD_NEW_SPECIES_SQL = "INSERT INTO species (Species_Name, Species_Description) VALUES (:speciesName, :speciesDescription)";
+	private static final String REMOVE_SPECIES_BY_ID_SQL = "DELETE FROM species WHERE Species_Id = :speciesId";
 	
 	public static final String DEFAULT_PHOTO_LOCATION = "D:/Zoo_Item_Photos";
 	
@@ -370,6 +372,33 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		
 		if(rowsAffected <= 0) {
 			throw new Exception("Number rows affected when removing department was less than 1.");
+		}
+		return retObject;
+	}
+	
+	public StandardReturnObject addNewSpecies(SpeciesInfo species) throws Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("speciesName", species.getSpeciesName());
+		params.addValue("speciesDescription", species.getSpeciesDescription());
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(ADD_NEW_SPECIES_SQL, params);
+		
+		if(rowsAffected <= 0) {
+			throw new Exception("Number rows affected when inserting new species was less than 1.");
+		}
+		return retObject;
+	}
+
+	public StandardReturnObject removeSpecies(SpeciesInfo speciesId) throws Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("speciesId", speciesId.getSpeciesId());
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(REMOVE_SPECIES_BY_ID_SQL, params);
+		
+		if(rowsAffected <= 0) {
+			throw new Exception("Number rows affected when removing species was less than 1.");
 		}
 		return retObject;
 	}

@@ -146,6 +146,18 @@ public class EnrichmentController {
 		return service.removeDepartment(deptId.getDepartmentId());
 	}
 	
+	@PostMapping(path = "addSpecies", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject addSpecies(@RequestBody SpeciesInfo species) {
+		return service.addSpecies(species);
+	}
+	
+	@PostMapping(path = "removeSpecies", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject removeSpecies(@RequestBody SpeciesInfo speciesId) {
+		return service.removeSpecies(speciesId);
+	}
+	
 	@PostMapping(path = "homepageImage", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public StandardReturnObject changeHomepageImage(@RequestBody ImageInfo newImage) {
