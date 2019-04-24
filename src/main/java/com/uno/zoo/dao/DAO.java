@@ -35,6 +35,7 @@ import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.EditUserInfo;
+import com.uno.zoo.dto.EnrichmentForm;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
 import com.uno.zoo.dto.LocationInfo;
@@ -96,6 +97,20 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	+" INNER JOIN species ON `item/species`.Species_Id=species.Species_Id"
 	+" INNER JOIN `item/category` ON item.Item_Id=`item/category`.Item_Id"
 	+" INNER JOIN category ON `item/category`.Category_Id=category.Category_Id WHERE item.Item_ApprovalStatus = 1;";
+
+	private static final String GET_ENRICHMENT_FORM = "SELECT Enrichment_DateSubmitted, Enrichment_Name, u1.User_Name, Department_Name, Item_Name, Species_Name, Animal_IsisNumber, Enrichment_Description,"
+	+ "Location_Name, Enrichment_PresentationMethod, Enrichment_TimeStart, Enrichment_TimeEnd, Enrichment_Frequency, Enrichment_LifeStrategies,"
+	+ "Enrichment_PreviousUse, Enrichment_Contact, Enrichment_SafetyQuestions, Enrichment_RisksHazards, Enrichment_Goal,"
+	+ "Enrichment_Source, Enrichment_TimeRequired, Enrichment_Construction, Enrichment_Volunteers, Enrichment_Inventory,"
+	+ "Enrichment_Concerns, u2.User_Name, Enrichment_IsApproved"
+	+ "FROM enrichment_experience"
+	+ "INNER JOIN item ON enrichment_experience.Enrichment_Item=item.Item_Id"
+	+ "INNER JOIN location ON enrichment_experience.Enrichment_Location=location.Location_Id"
+	+ "INNER JOIN species ON enrichment_experience.Enrichment_Species=species.Species_Id"
+	+ "INNER JOIN department ON enrichment_experience.Enrichment_Department=department.Department_Id"
+	+ "INNER JOIN user u1 ON enrichment_experience.Enrichment_Submittor=u1.User_Id"
+	+ "INNER JOIN user u2 ON enrichment_experience.Enrichment_Submittor=u2.User_Id"
+	+ "INNER JOIN animal ON enrichment_experience.Enrichment_Animal=animal.Animal_Id;";
 
 	public static final String DEFAULT_PHOTO_LOCATION = "D:/Zoo_Item_Photos";
 	
@@ -700,5 +715,50 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		};
 		
 		return getNamedParameterJdbcTemplate().query(GET_APPROVED_ITEM_SQL, rowMapper);
+	} 
+
+
+	public List<EnrichmentForm> getEnrichmentForm() {
+		ResultSetExtractor<List<EnrichmentForm>> rowMapper = new ResultSetExtractor<List<EnrichmentForm>>() {
+			@Override public List<EnrichmentForm> extractData(ResultSet rs) throws SQLException {
+				List<EnrichmentForm> info = new ArrayList<>();
+				while(rs.next()) {
+					EnrichmentForm EnrichmentForm = new EnrichmentForm();
+					EnrichmentForm.setAnimal_IsisNumber(rs.getString("Animal_IsisNumber"));
+					EnrichmentForm.setAppoval_User_Name(rs.getString("Appoval_User_Name"));
+					EnrichmentForm.setDepartment_Name(rs.getString("Department_Name"));
+					EnrichmentForm.setEnrichment_Concerns(rs.getString("Enrichment_Concerns"));
+					EnrichmentForm.setEnrichment_Construction(rs.getString("Enrichment_Construction"));
+					EnrichmentForm.setEnrichment_Contact(rs.getString("Enrichment_Contact"));
+					EnrichmentForm.setEnrichment_DateSubmitted(rs.getString("Enrichment_DateSubmitted"));
+					EnrichmentForm.setEnrichment_Description(rs.getString("Enrichment_Description"));
+					EnrichmentForm.setEnrichment_Frequency(rs.getString("Enrichment_Frequency"));
+					EnrichmentForm.setEnrichment_Goal(rs.getString("Enrichment_Goal"));
+
+					EnrichmentForm.setEnrichment_Inventory(rs.getString("Enrichment_Inventory"));
+					EnrichmentForm.setEnrichment_IsApproved(rs.getString("Enrichment_IsApproved"));
+					EnrichmentForm.setEnrichment_LifeStrategies(rs.getString("Enrichment_LifeStrategies"));
+					EnrichmentForm.setEnrichment_Name(rs.getString("Enrichment_Name"));
+					EnrichmentForm.setEnrichment_PresentationMethod(rs.getString("Enrichment_PresentationMethod"));
+					EnrichmentForm.setEnrichment_PreviousUse(rs.getString("Enrichment_PreviousUse"));
+					EnrichmentForm.setEnrichment_RisksHazards(rs.getString("Enrichment_RisksHazards"));
+					EnrichmentForm.setEnrichment_SafetyQuestions(rs.getString("Enrichment_SafetyQuestions"));
+					EnrichmentForm.setEnrichment_Source(rs.getString("Enrichment_Source"));
+					EnrichmentForm.setEnrichment_TimeEnd(rs.getString("Enrichment_TimeEnd"));
+
+					EnrichmentForm.setEnrichment_TimeRequired(rs.getString("Enrichment_TimeRequired"));
+					EnrichmentForm.setEnrichment_TimeStart(rs.getString("Enrichment_TimeStart"));
+					EnrichmentForm.setEnrichment_Volunteers(rs.getString("Enrichment_Volunteers"));
+					EnrichmentForm.setItem_Name(rs.getString("Item_Name"));
+					EnrichmentForm.setLocation_Name(rs.getString("Location_Name"));
+					EnrichmentForm.setSpecies_Name(rs.getString("Species_Name"));
+					EnrichmentForm.setSubmittor_User_Name(rs.getString("Submittor_User_Name"));
+					info.add(EnrichmentForm);
+				}
+				return info;
+			} 
+		};
+		
+		return getNamedParameterJdbcTemplate().query(GET_ENRICHMENT_FORM, rowMapper);
 	}
 }
