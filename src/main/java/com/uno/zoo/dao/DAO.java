@@ -104,18 +104,18 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 
 	
 	private static final String GET_ENRICHMENT_FORM = "SELECT Enrichment_DateSubmitted, Enrichment_Name, u1.User_Name, Department_Name, Item_Name, Species_Name, Animal_IsisNumber, Enrichment_Description,"
-	+ "Location_Name, Enrichment_PresentationMethod, Enrichment_TimeStart, Enrichment_TimeEnd, Enrichment_Frequency, Enrichment_LifeStrategies,"
-	+ "Enrichment_PreviousUse, Enrichment_Contact, Enrichment_SafetyQuestions, Enrichment_RisksHazards, Enrichment_Goal,"
-	+ "Enrichment_Source, Enrichment_TimeRequired, Enrichment_Construction, Enrichment_Volunteers, Enrichment_Inventory,"
-	+ "Enrichment_Concerns, u2.User_Name, Enrichment_IsApproved"
-	+ "FROM enrichment_experience"
-	+ "INNER JOIN item ON enrichment_experience.Enrichment_Item=item.Item_Id"
-	+ "INNER JOIN location ON enrichment_experience.Enrichment_Location=location.Location_Id"
-	+ "INNER JOIN species ON enrichment_experience.Enrichment_Species=species.Species_Id"
-	+ "INNER JOIN department ON enrichment_experience.Enrichment_Department=department.Department_Id"
-	+ "INNER JOIN user u1 ON enrichment_experience.Enrichment_Submittor=u1.User_Id"
-	+ "INNER JOIN user u2 ON enrichment_experience.Enrichment_Submittor=u2.User_Id"
-	+ "INNER JOIN animal ON enrichment_experience.Enrichment_Animal=animal.Animal_Id;";
+	+ " Location_Name, Enrichment_PresentationMethod, Enrichment_TimeStart, Enrichment_TimeEnd, Enrichment_Frequency, Enrichment_LifeStrategies,"
+	+ " Enrichment_PreviousUse, Enrichment_Contact, Enrichment_SafetyQuestions, Enrichment_RisksHazards, Enrichment_Goal,"
+	+ " Enrichment_Source, Enrichment_TimeRequired, Enrichment_Construction, Enrichment_Volunteers, Enrichment_Inventory,"
+	+ " Enrichment_Concerns, u2.User_Name, Enrichment_IsApproved"
+	+ " FROM enrichment_experience"
+	+ " INNER JOIN item ON enrichment_experience.Enrichment_Item=item.Item_Id"
+	+ " INNER JOIN location ON enrichment_experience.Enrichment_Location=location.Location_Id"
+	+ " INNER JOIN species ON enrichment_experience.Enrichment_Species=species.Species_Id"
+	+ " INNER JOIN department ON enrichment_experience.Enrichment_Department=department.Department_Id"
+	+ " INNER JOIN user u1 ON enrichment_experience.Enrichment_Submittor=u1.User_Id"
+	+ " INNER JOIN user u2 ON enrichment_experience.Enrichment_Submittor=u2.User_Id"
+	+ " INNER JOIN animal ON enrichment_experience.Enrichment_Animal=animal.Animal_Id;";
 
 	public static final String DEFAULT_PHOTO_LOCATION = "D:/Zoo_Item_Photos";
 	
@@ -730,7 +730,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 				while(rs.next()) {
 					EnrichmentForm EnrichmentForm = new EnrichmentForm();
 					EnrichmentForm.setAnimal_IsisNumber(rs.getString("Animal_IsisNumber"));
-					EnrichmentForm.setAppoval_User_Name(rs.getString("Appoval_User_Name"));
+					EnrichmentForm.setAppoval_User_Name(rs.getString("u1.User_Name"));
 					EnrichmentForm.setDepartment_Name(rs.getString("Department_Name"));
 					EnrichmentForm.setEnrichment_Concerns(rs.getString("Enrichment_Concerns"));
 					EnrichmentForm.setEnrichment_Construction(rs.getString("Enrichment_Construction"));
@@ -757,7 +757,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 					EnrichmentForm.setItem_Name(rs.getString("Item_Name"));
 					EnrichmentForm.setLocation_Name(rs.getString("Location_Name"));
 					EnrichmentForm.setSpecies_Name(rs.getString("Species_Name"));
-					EnrichmentForm.setSubmittor_User_Name(rs.getString("Submittor_User_Name"));
+					EnrichmentForm.setSubmittor_User_Name(rs.getString("u2.User_Name"));
 					info.add(EnrichmentForm);
 				}
 				return info;
