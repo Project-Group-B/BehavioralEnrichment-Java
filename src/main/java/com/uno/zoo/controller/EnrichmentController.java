@@ -21,6 +21,7 @@ import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.EditUserInfo;
+import com.uno.zoo.dto.EnrichmentForm;
 import com.uno.zoo.dto.ImageInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
@@ -152,10 +153,28 @@ public class EnrichmentController {
 		return service.removeDepartment(deptId.getDepartmentId());
 	}
 	
+	@PostMapping(path = "addSpecies", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject addSpecies(@RequestBody SpeciesInfo species) {
+		return service.addSpecies(species);
+	}
+	
+	@PostMapping(path = "removeSpecies", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject removeSpecies(@RequestBody SpeciesInfo speciesId) {
+		return service.removeSpecies(speciesId);
+	}
+	
 	@PostMapping(path = "homepageImage", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public StandardReturnObject changeHomepageImage(@RequestBody ImageInfo newImage) {
 		return service.changeHomepageImage(newImage);
+	}
+	
+	@PostMapping(path = "addCategory", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject addNewCategory(@RequestBody CategoryInfo cat) {
+		return service.addNewCategory(cat);
 	}
 	
 	@GetMapping(path = "getHomepageImage", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -207,6 +226,12 @@ public class EnrichmentController {
 	@GetMapping(path = "incidentReports", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<SubmittedIncident> getIncidentReport(){
 		return service.getIncidentReport();
+	}
+
+	
+	@GetMapping(path = "getEnrichmentForm", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<EnrichmentForm> getEnrichmentForm() {
+		return service.getEnrichmentForm();
 	}
 
 	private boolean usernameValid(String username) {

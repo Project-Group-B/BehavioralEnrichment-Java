@@ -18,6 +18,7 @@ import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.EditUserInfo;
+import com.uno.zoo.dto.EnrichmentForm;
 import com.uno.zoo.dto.ImageInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
@@ -101,7 +102,7 @@ public class EnrichmentService {
 		} catch(Exception e) {
 			LOGGER.info("Error inserting enrichment request form into database:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true, "ERROR: Insertion failed - exception generated");
+			ret.setError(true, "Insertion failed - exception generated");
 		}
 		
 		return ret;
@@ -274,6 +275,51 @@ public class EnrichmentService {
 		
 		return categories;
 	}
+	
+	public StandardReturnObject addNewCategory(CategoryInfo cat) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.addNewCategory(cat);
+			ret.setMessage("Successfully added category '" + cat.getCategoryName() + "'");
+		} catch(Exception e) {
+			LOGGER.info("Error adding category into database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error adding category - with thrown exception");
+		}
+		
+		return ret;
+	}
+	
+	public StandardReturnObject addSpecies(SpeciesInfo species) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.addNewSpecies(species);
+			ret.setMessage("Successfully added species '" + species.getSpeciesName() + "'");
+		} catch(Exception e) {
+			LOGGER.info("Error adding species into database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error adding species - with thrown exception");
+		}
+		
+		return ret;
+	}
+
+	public StandardReturnObject removeSpecies(SpeciesInfo speciesId) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.removeSpecies(speciesId);
+			ret.setMessage("Successfully removed species with id '" + speciesId.getSpeciesId() + "'");
+		} catch(Exception e) {
+			LOGGER.info("Error removing species from database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error removing species - with thrown exception");
+		}
+		
+		return ret;
+	}
 
 	/**
 	 * Gets a list of all species from the database.
@@ -384,5 +430,18 @@ public class EnrichmentService {
 		}
 		
 		return approvedEntries;
+	}
+
+	public List<EnrichmentForm> getEnrichmentForm() {
+		List<EnrichmentForm> EnrichmentForm = new ArrayList<>();
+		
+		try {
+			EnrichmentForm = dao.getEnrichmentForm();
+		} catch(Exception e) {
+			LOGGER.error("Error getting locations:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return EnrichmentForm;
 	}
 }
