@@ -86,6 +86,7 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	private static final String REMOVE_DEPARTMENT_BY_ID_SQL = "DELETE FROM department WHERE Department_Id = :id";
 	private static final String ADD_NEW_SPECIES_SQL = "INSERT INTO species (Species_Name, Species_Description) VALUES (:speciesName, :speciesDescription)";
 	private static final String REMOVE_SPECIES_BY_ID_SQL = "DELETE FROM species WHERE Species_Id = :speciesId";
+	private static final String ADD_NEW_CATEGORY_SQL = "INSERT INTO category (Category_Name, Category_Description) VALUES (:categoryName, :categoryDescription)";
 	
 	private static final String GET_APPROVED_ITEM_SQL = "SELECT Item_Name, Behavior_Name, Item_ApprovalStatus, Item_DateApproved, Item_SafetyNotes, Item_Exceptions, Item_Comments, Species_Name, Category_Name " 
 	+ " FROM item"
@@ -184,7 +185,6 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	 * @throws SQLException 
 	 */
 	public StandardReturnObject insertRequestForm(CompleteRequestForm form) throws DataAccessException, SQLException {
-		// TODO: changed db enrichment.Enrichment_Inventory to varchar(75)
 		java.util.Date now = new java.util.Date();
 		java.sql.Date nowSql = new java.sql.Date(now.getTime());
 		
@@ -202,8 +202,8 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		params.addValue("description", form.getEnrichmentDescription());
 		params.addValue("location", form.getEnrichmentLocation());
 		params.addValue("presentationMethod", form.getEnrichmentPresentationMethod());
-		params.addValue("timeStart", nowSql); // TODO: use timepicker
-		params.addValue("timeEnd", nowSql); // TODO: use timepicker
+		params.addValue("timeStart", nowSql);
+		params.addValue("timeEnd", nowSql);
 		params.addValue("frequency", Integer.parseInt(form.getEnrichmentFrequency()));
 
 		params.addValue("lifeStrategies", form.isLifeStrategiesWksht() ? 1 : 0);
@@ -409,6 +409,20 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		
 		if(rowsAffected <= 0) {
 			throw new Exception("Number rows affected when removing species was less than 1.");
+		}
+		return retObject;
+	}
+	
+	public StandardReturnObject addNewCategory(CategoryInfo cat) throws Exception {
+		StandardReturnObject retObject = new StandardReturnObject();
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("categoryName", cat.getCategoryName());
+		params.addValue("categoryDescription", cat.getCategoryDescription());
+		
+		int rowsAffected = getNamedParameterJdbcTemplate().update(ADD_NEW_CATEGORY_SQL, params);
+		
+		if(rowsAffected <= 0) {
+			throw new Exception("Number rows affected when inserting new category was less than 1.");
 		}
 		return retObject;
 	}

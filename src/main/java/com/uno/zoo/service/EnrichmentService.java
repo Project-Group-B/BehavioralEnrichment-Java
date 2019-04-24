@@ -275,6 +275,21 @@ public class EnrichmentService {
 		return categories;
 	}
 	
+	public StandardReturnObject addNewCategory(CategoryInfo cat) {
+		StandardReturnObject ret = new StandardReturnObject();
+		
+		try {
+			ret = dao.addNewCategory(cat);
+			ret.setMessage("Successfully added category '" + cat.getCategoryName() + "'");
+		} catch(Exception e) {
+			LOGGER.info("Error adding category into database:");
+			LOGGER.error(e.getMessage(), e);
+			ret.setError(true, "Error adding category - with thrown exception");
+		}
+		
+		return ret;
+	}
+	
 	public StandardReturnObject addSpecies(SpeciesInfo species) {
 		StandardReturnObject ret = new StandardReturnObject();
 		

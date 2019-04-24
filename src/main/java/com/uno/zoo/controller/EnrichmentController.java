@@ -165,6 +165,12 @@ public class EnrichmentController {
 		return service.changeHomepageImage(newImage);
 	}
 	
+	@PostMapping(path = "addCategory", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public StandardReturnObject addNewCategory(@RequestBody CategoryInfo cat) {
+		return service.addNewCategory(cat);
+	}
+	
 	@GetMapping(path = "getHomepageImage", produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ImageInfo getHomepageImage(HttpServletResponse response) {
 		return service.getHomepageImage();
