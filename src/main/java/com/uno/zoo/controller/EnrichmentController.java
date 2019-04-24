@@ -21,6 +21,7 @@ import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.EditUserInfo;
+import com.uno.zoo.dto.EnrichmentForm;
 import com.uno.zoo.dto.ImageInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
@@ -196,6 +197,12 @@ public class EnrichmentController {
 	@GetMapping(path = "approvedEntries", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ApprovedEntry> getApprovedEntries() {
 		return service.getApprovedEntries();
+	}
+
+	
+	@GetMapping(path = "getEnrichmentForm", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<EnrichmentForm> getEnrichmentForm() {
+		return service.getEnrichmentForm();
 	}
 
 	private boolean usernameValid(String username) {
