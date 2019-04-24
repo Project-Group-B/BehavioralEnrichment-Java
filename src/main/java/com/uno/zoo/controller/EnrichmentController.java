@@ -31,7 +31,9 @@ import com.uno.zoo.dto.UserInfo;
 import com.uno.zoo.dto.UserListInfo;
 import com.uno.zoo.dto.UserLogIn;
 import com.uno.zoo.dto.UserSignUp;
+import com.uno.zoo.dto.IncidentReportStatus;
 import com.uno.zoo.service.EnrichmentService;
+
 
 @RestController
 @CrossOrigin
@@ -202,9 +204,9 @@ public class EnrichmentController {
 	}
 	
 	//Incident Report Status Page
-	@GetMapping(path = "incidentStatusReports", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<incidentStatus> getIncidentReport(){
-		return service.getIncidentReport(){
+	@GetMapping(path = "incidentReports", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<SubmittedIncident> getIncidentReport(){
+		return service.getIncidentReport();
 	}
 
 	private boolean usernameValid(String username) {

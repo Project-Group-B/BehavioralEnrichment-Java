@@ -94,6 +94,10 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 	+" INNER JOIN `item/category` ON item.Item_Id=`item/category`.Item_Id"
 	+" INNER JOIN category ON `item/category`.Category_Id=category.Category_Id WHERE item.Item_ApprovalStatus = 1;";
 
+	//incident report status page
+	private static final String GET_INCIDENT_REPORT_SQL = "SELECT Incident_Id, Incident_DateHappened, Incident_EnrichmentType, Incident_Department, Incident_Resolution";
+
+	
 	public static final String DEFAULT_PHOTO_LOCATION = "D:/Zoo_Item_Photos";
 	
 	public DAO(DataSource dataSource) {
@@ -657,5 +661,26 @@ public class DAO extends NamedParameterJdbcDaoSupport {
 		};
 		
 		return getNamedParameterJdbcTemplate().query(GET_APPROVED_ITEM_SQL, rowMapper);
+	}
+	
+	public List<SubmittedIncident> getIncidentReport(){
+		ResultSetExtractor<List<SubmittedIncident>> rowMapper = new ResultSetExtractor<List<SubmittedIncident>>() {
+			@Override public List<SubmittedIncident> extractData(ResultSet rs) throws SQLException {
+				List<SubmittedIncident> info = new ArrayList<>();
+				while(rs.next()) {
+					SubmittedIncident newIncidentReport = new SubmittedIncident();
+					newIncidentReport.setIncidentID(rs.getString("Incident_Id"));
+					newIncidentReport.setIncidentDate(rs.getString("Incident_DateHappened"));
+					newIncidentReport.setEnrichmentItem(rs.getString("Incident_EnrichmentType"));
+					newIncidentReport.setDepartment(rs.getString("Incident_Department"));
+					newIncidentReport.setFutureUseDecision(rs.getString("Incident_Resolution"));
+					info.add(newIncidentReport);
+				}
+				return info;
+			} 
+		};
+		
+		
+		return getNamedParameterJdbcTemplate().query(GET_INCIDENT_REPORT_SQL, rowMapper);
 	}
 }
