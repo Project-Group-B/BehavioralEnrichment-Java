@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.uno.zoo.dao.DAO;
 import com.uno.zoo.dto.AnimalForm;
 import com.uno.zoo.dto.AnimalInfo;
+import com.uno.zoo.dto.ApprovedEntry;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
@@ -400,5 +401,18 @@ public class EnrichmentService {
 		}
         
         return ret;
+	}
+
+	public List<ApprovedEntry> getApprovedEntries() {
+		List<ApprovedEntry> approvedEntries = new ArrayList<>();
+		
+		try {
+			approvedEntries = dao.getApprovedEntries();
+		} catch(Exception e) {
+			LOGGER.error("Error getting locations:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return approvedEntries;
 	}
 }

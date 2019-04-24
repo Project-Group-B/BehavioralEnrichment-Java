@@ -15,6 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 import com.uno.zoo.dto.AnimalForm;
 import com.uno.zoo.dto.AnimalInfo;
+import com.uno.zoo.dto.ApprovedEntry;
 import com.uno.zoo.dto.CategoryInfo;
 import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
@@ -202,6 +203,11 @@ public class EnrichmentController {
 	@GetMapping(path = "locations", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<LocationInfo> getLocations() {
 		return service.getLocations();
+	}
+
+	@GetMapping(path = "approvedEntries", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<ApprovedEntry> getApprovedEntries() {
+		return service.getApprovedEntries();
 	}
 
 	private boolean usernameValid(String username) {
