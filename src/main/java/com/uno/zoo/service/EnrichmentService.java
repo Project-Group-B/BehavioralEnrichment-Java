@@ -18,6 +18,7 @@ import com.uno.zoo.dto.ChangePasswordForm;
 import com.uno.zoo.dto.CompleteRequestForm;
 import com.uno.zoo.dto.DepartmentInfo;
 import com.uno.zoo.dto.EditUserInfo;
+import com.uno.zoo.dto.EnrichmentForm;
 import com.uno.zoo.dto.ImageInfo;
 import com.uno.zoo.dto.ItemForm;
 import com.uno.zoo.dto.ItemInfo;
@@ -384,5 +385,18 @@ public class EnrichmentService {
 		}
 		
 		return approvedEntries;
+	}
+
+	public List<EnrichmentForm> getEnrichmentForm() {
+		List<EnrichmentForm> EnrichmentForm = new ArrayList<>();
+		
+		try {
+			EnrichmentForm = dao.getEnrichmentForm();
+		} catch(Exception e) {
+			LOGGER.error("Error getting locations:");
+			LOGGER.error(e.getMessage(), e);
+		}
+		
+		return EnrichmentForm;
 	}
 }
