@@ -101,7 +101,7 @@ public class EnrichmentService {
 		} catch(Exception e) {
 			LOGGER.info("Error inserting enrichment request form into database:");
 			LOGGER.error(e.getMessage(), e);
-			ret.setError(true, "ERROR: Insertion failed - exception generated");
+			ret.setError(true, "Insertion failed - exception generated");
 		}
 		
 		return ret;
